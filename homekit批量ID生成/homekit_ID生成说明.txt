@@ -1,0 +1,34 @@
+批量ID生成
+------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<
+1.首先安装工具所需python模块srp,调用homekit专用批量生成工具<hk_mfg_gen.py>生成批量所需的 hkL8_config.csv 和 hkL8_values.csv 文件：
+	a) cd /home/nepenthes/prjSpace/ESP32_L8_cmHomekit/components/esp-homekit-sdk/tools/mfg_homekit
+	b) pip install srp
+	c) ./hk_mfg_gen.py --prefix Fan --count 100 --outdir images --cid 3 --size 0x3000
+	d) 在当前文件夹将产生image文件,将image文件夹下生成的 homekit_config_xxxx_xxxx.csv 及 homekit_value_xxxx_xxxx.csv改为所需的 hkL8_config.csv 和 hkL8_values.csv
+
+2.将所得的 hkL8_config.csv 和 hkL8_values.csv 文件复制到常规批量工具所在文件夹,并用工具<mfg_gen.py>生成所需自定义键值的 .bin ID文件
+	a) cd /home/nepenthes/prjSpace/ESP32_L8_cmHomekit/components/esp-homekit-sdk/tools/idf_tools/mass_mfg
+	b) ./mfg_gen.py --conf hkL8_config.csv --values hkL8_values.csv --prefix HKL8 --outdir HKL8_ID --fileid setup_code --size 0x3000
+	c) 当前目录下生成文件夹 HKL8_ID,内含所生成的批量homekit ID
+
+注意：
+	a)hkL8_config.csv文件内容格式应该如下，特别注意string类型
+		hap_setup,namespace,
+		setup_id,data,binary
+		setup_code,data,string
+		setup_salt,data,hex2bin
+		setup_verifier,data,hex2bin
+		setup_payload,data,string
+	b)工程所用的partition.csv文件必须包含factory_nvs,如：
+		# Name,			Type, SubType,  Offset,   	Size,  Flags
+		nvs,      		data, nvs,      0x9000,   	16k
+		otadata,  		data, ota,      0xd000,   	8k
+		phy_init, 		data, phy,      0xf000,   	4k
+		ota_0,  		app,  ota_0,    0x10000,  	3904k
+		ota_1,  		app,  ota_1,    0x3e0000,  	3904k
+		L8_devDataRcord,data, nvs,      0x7b0000,   128k
+		factory_nvs,    data, nvs,    	0x7d0000,   32k
+		coredump, 		data, coredump, ,     		64K
+		reserved, 		data, 0xfe,     ,     		32K
+	c)使用terminal环境烧录homekit_ID的时候，使用命令make factory-nvs-flash 即可，提前ID对应的.bin文件更名为<"工程名称"_factory>
+	d)批量烧录时，根据ID的bin文件大小将ID烧写地址与partition.csv内'factory_nvs'条目地址对齐即可
