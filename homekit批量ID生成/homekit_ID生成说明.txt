@@ -8,13 +8,13 @@
 
 2.将所得的 hkL8_config.csv 和 hkL8_values.csv 文件复制到常规批量工具所在文件夹,并用工具<mfg_gen.py>生成所需自定义键值的 .bin ID文件
 	a) cd /home/nepenthes/prjSpace/ESP32_L8_cmHomekit/components/esp-homekit-sdk/tools/idf_tools/mass_mfg
-	b) 对 hkL8_config.csv 文件进行修改，只留下需要的信息键值，如只需要 setup_code 和 setup_payload, 则只需要留下这两项即可
+	b) 对 hkL8_config.csv 文件进行修改，增加或删减信息键值，如只需要 setup_code 和 setup_payload, 则只需要留下这两项即可，！！！实际全部都要！！！
 	c) 对 hkL8_values.csv 文件进行修改，使用排序及筛选程序（homekit_ID排序.c文件内）对 hkL8_values.csv 进行处理(注意需要文件进行.txt中转处理，详情看程序)
 	d) ./mfg_gen.py --conf hkL8_config.csv --values hkL8_values.csv --prefix HKL8 --outdir HKL8_ID --fileid setup_code --size 0x3000
 	e) 当前目录下生成文件夹 HKL8_ID,内含所生成的批量homekit ID, d)步骤中的'--fileid'可以根据相关键值更改生成id的文件名称
 
 注意：
-	a)hkL8_config.csv文件内容格式应该如下，特别注意string类型
+	a)hkL8_config.csv文件内容格式应该如下（照抄即可！！！），特别注意 string类型 以及 头部的声明'hap_setup,namespace'
 		hap_setup,namespace,
 		setup_id,data,binary
 		setup_code,data,string
