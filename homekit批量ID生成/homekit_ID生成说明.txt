@@ -2,14 +2,16 @@
 ------------------------------------------------------------------------<<<<<<<<<<<<<<<<<<<<<
 1.首先安装工具所需python模块srp,调用homekit专用批量生成工具<hk_mfg_gen.py>生成批量所需的 hkL8_config.csv 和 hkL8_values.csv 文件：
 	a) cd /home/nepenthes/prjSpace/ESP32_L8_cmHomekit/components/esp-homekit-sdk/tools/mfg_homekit
-	b) pip install srp
+	b) pip install srp --注意：需要联网，同时要声明'IDF_PATH'
 	c) ./hk_mfg_gen.py --prefix Fan --count 100 --outdir images --cid 3 --size 0x3000
 	d) 在当前文件夹将产生image文件,将image文件夹下生成的 homekit_config_xxxx_xxxx.csv 及 homekit_value_xxxx_xxxx.csv改为所需的 hkL8_config.csv 和 hkL8_values.csv
 
 2.将所得的 hkL8_config.csv 和 hkL8_values.csv 文件复制到常规批量工具所在文件夹,并用工具<mfg_gen.py>生成所需自定义键值的 .bin ID文件
 	a) cd /home/nepenthes/prjSpace/ESP32_L8_cmHomekit/components/esp-homekit-sdk/tools/idf_tools/mass_mfg
-	b) ./mfg_gen.py --conf hkL8_config.csv --values hkL8_values.csv --prefix HKL8 --outdir HKL8_ID --fileid setup_code --size 0x3000
-	c) 当前目录下生成文件夹 HKL8_ID,内含所生成的批量homekit ID
+	b) 对 hkL8_config.csv 文件进行修改，只留下需要的信息键值，如只需要 setup_code 和 setup_payload, 则只需要留下这两项即可
+	c) 对 hkL8_values.csv 文件进行修改，使用排序及筛选程序（homekit_ID排序.c文件内）对 hkL8_values.csv 进行处理(注意需要文件进行.txt中转处理，详情看程序)
+	d) ./mfg_gen.py --conf hkL8_config.csv --values hkL8_values.csv --prefix HKL8 --outdir HKL8_ID --fileid setup_code --size 0x3000
+	e) 当前目录下生成文件夹 HKL8_ID,内含所生成的批量homekit ID, d)步骤中的'--fileid'可以根据相关键值更改生成id的文件名称
 
 注意：
 	a)hkL8_config.csv文件内容格式应该如下，特别注意string类型
@@ -32,3 +34,31 @@
 		reserved, 		data, 0xfe,     ,     		32K
 	c)使用terminal环境烧录homekit_ID的时候，使用命令make factory-nvs-flash 即可，提前ID对应的.bin文件更名为<"工程名称"_factory>
 	d)批量烧录时，根据ID的bin文件大小将ID烧写地址与partition.csv内'factory_nvs'条目地址对齐即可
+	e)'./hk_mfg_gen.py' 命令中 '--cid' 对应的设备类型：
+		typedef enum {
+			HAP_CID_NONE = 0,				//--0
+			HAP_CID_OTHER,					//--1
+			HAP_CID_BRIDGE,					//--2
+			HAP_CID_FAN,					//--风扇为 3, 其他自己加减就可以了
+			HAP_CID_GARAGE_DOOR_OPENER,		//--4
+			HAP_CID_LIGHTING,				//--5
+			HAP_CID_LOCK,					//--6
+			HAP_CID_OUTLET,					//--7
+			HAP_CID_SWITCH,					//--8
+			HAP_CID_THERMOSTAT,				//--9
+			HAP_CID_SENSOR,					//--10
+			HAP_CID_SECURITY_SYSTEM,		//--11
+			HAP_CID_DOOR,					//--12
+			HAP_CID_WINDOW,					//--13
+			HAP_CID_WINDOW_COVERING,		//--14
+			HAP_CID_PROGRAMMABLE_SWITCH,	//--15
+			HAP_CID_RESERVED,				//--16
+			HAP_CID_IP_CAMERA,				//--17
+			HAP_CID_VIDEO_DOORBELL,			//--18
+			HAP_CID_AIR_PURIFIER,			//--19
+			HAP_CID_HEATER,					//--20
+			HAP_CID_AIR_CONDITIONER,		//--21
+			HAP_CID_HUMIDIFIER,				//--22
+			HAP_CID_DEHUMIDIFIER,			//--23
+			HAP_CID_MAX,					//--24
+		} hap_cid_t;

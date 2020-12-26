@@ -173,7 +173,7 @@ void dev_hap_event_handler(hap_event_t event, void *data)
         case HAP_EVENT_CTRL_CONNECTED :
             ESP_LOGI(TAG, "Controller %s Connected", (char *)data);
             HAP_WAC_STANDBY_FLG = true;
-            mqtt_app_start();
+            // mqtt_app_start();
             break;
         case HAP_EVENT_CTRL_DISCONNECTED :
             ESP_LOGI(TAG, "Controller %s Disconnected", (char *)data);
@@ -182,7 +182,9 @@ void dev_hap_event_handler(hap_event_t event, void *data)
             ESP_LOGI(TAG, "WAC Started with name %s", (char *)data);
             break;
         case HAP_EVENT_WAC_TIMEOUT :
-            ESP_LOGI(TAG, "WAC Stopped due to timeout. Please reboot the accessory");
+            ESP_LOGW(TAG, "WAC Stopped due to timeout. Please reboot the accessory");
+            lvGui_usrAppBussinessRunning_block(1, "time out,\nrestart", 2);
+            usrApplication_systemRestartTrig(3);
             break;
 
         case HAP_EVENT_WAC_SUCCESS :
@@ -214,7 +216,8 @@ static esp_err_t hap_system_handler(void *ctx, system_event_t * event)
 
 #if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)|\
    (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)|\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)|\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
 
 #else
             lvGui_usrAppBussinessRunning_block(0, "wifi\nconnecting...", 30); //UI阻塞提示，wifi连接中
@@ -232,7 +235,7 @@ static esp_err_t hap_system_handler(void *ctx, system_event_t * event)
 
 #if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)|\
    (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)|\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
 
 			devBeepTips_trig(4, 8, 100, 40, 2); //beeps提示
 #else
@@ -249,10 +252,8 @@ static esp_err_t hap_system_handler(void *ctx, system_event_t * event)
             }break;  
         case SYSTEM_EVENT_STA_GOT_IP:
             printf("Got IP: %s\n", ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
-            if(HAP_WAC_STANDBY_FLG == true){
-
-                mqtt_app_start();
-            }
+            mqtt_app_start();
+            if(HAP_WAC_STANDBY_FLG == true){}
             break;
         case SYSTEM_EVENT_STA_DISCONNECTED:
             printf("Failed to connect to network/disconnected.\n");
@@ -317,8 +318,10 @@ static int htDevice_write(hap_write_data_t write_data[], int count,
 
             case devTypeDef_mulitSwOneBit:
             case devTypeDef_moudleSwOneBit:
+            case devTypeDef_relayBox_1bit:
             case devTypeDef_mulitSwTwoBit:
             case devTypeDef_moudleSwTwoBit:
+            case devTypeDef_relayBox_2bit:
             case devTypeDef_mulitSwThreeBit:
             case devTypeDef_moudleSwThreeBit:{
 
@@ -347,7 +350,8 @@ static int htDevice_write(hap_write_data_t write_data[], int count,
             }break;
 
             case devTypeDef_curtain:
-            case devTypeDef_moudleSwCurtain:{
+            case devTypeDef_moudleSwCurtain:
+            case devTypeDef_relayBox_curtain:{
 
                 if (!strcmp(hap_char_get_type_uuid(write->hc), HAP_CHAR_UUID_TARGET_POSITION)){
 
@@ -541,7 +545,8 @@ static void bridge_thread_entry(void *p)
 
 #if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)|\
    (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)|\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)|\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
 
 #else
    lvGui_usrAppBussinessRunning_blockCancel();
@@ -691,12 +696,15 @@ static void htAccessoryDevice_registerBySwitchType(uint8_t devMAC[MWIFI_ADDR_LEN
 
             case devTypeDef_mulitSwOneBit:
             case devTypeDef_moudleSwOneBit:
+            case devTypeDef_relayBox_1bit:
             case devTypeDef_mulitSwTwoBit:
             case devTypeDef_moudleSwTwoBit:
+            case devTypeDef_relayBox_2bit:
             case devTypeDef_mulitSwThreeBit:
             case devTypeDef_moudleSwThreeBit:
             case devTypeDef_curtain:
-            case devTypeDef_moudleSwCurtain:{
+            case devTypeDef_moudleSwCurtain:
+            case devTypeDef_relayBox_curtain:{
 
                 uint8_t creatLoop = 0;
                 static bool bgCreated_flg = false;
@@ -704,10 +712,12 @@ static void htAccessoryDevice_registerBySwitchType(uint8_t devMAC[MWIFI_ADDR_LEN
                 switch(currentDev_typeGet()){
 
                     case devTypeDef_mulitSwOneBit:
-                    case devTypeDef_moudleSwOneBit:creatLoop = 1;break;
+                    case devTypeDef_moudleSwOneBit:
+                    case devTypeDef_relayBox_1bit:creatLoop = 1;break;
 
                     case devTypeDef_mulitSwTwoBit:
-                    case devTypeDef_moudleSwTwoBit:creatLoop = 2;break;
+                    case devTypeDef_moudleSwTwoBit:
+                    case devTypeDef_relayBox_2bit:creatLoop = 2;break;
 
                     case devTypeDef_mulitSwThreeBit:
                     case devTypeDef_moudleSwThreeBit:creatLoop = 3;break;
@@ -732,8 +742,10 @@ static void htAccessoryDevice_registerBySwitchType(uint8_t devMAC[MWIFI_ADDR_LEN
 
                     case devTypeDef_mulitSwOneBit:
                     case devTypeDef_moudleSwOneBit:
+                    case devTypeDef_relayBox_1bit:
                     case devTypeDef_mulitSwTwoBit:
                     case devTypeDef_moudleSwTwoBit:
+                    case devTypeDef_relayBox_2bit:
                     case devTypeDef_mulitSwThreeBit:
                     case devTypeDef_moudleSwThreeBit:{
 
@@ -771,7 +783,8 @@ static void htAccessoryDevice_registerBySwitchType(uint8_t devMAC[MWIFI_ADDR_LEN
                     }break;
 
                     case devTypeDef_curtain:
-                    case devTypeDef_moudleSwCurtain:{
+                    case devTypeDef_moudleSwCurtain:
+                    case devTypeDef_relayBox_curtain:{
 
                         char accessory_name[16] = {0},
                             accessory_serialNum[32] = {0};
@@ -898,7 +911,8 @@ void deviceDestoryPreventChange(devTypeDef_enum devType){
     switch(devType){
 
         case devTypeDef_mulitSwOneBit:
-        case devTypeDef_moudleSwOneBit:{
+        case devTypeDef_moudleSwOneBit:
+        case devTypeDef_relayBox_1bit:{
 
             hap_acc = hap_acc_get_by_aid(2);
             hap_remove_bridged_accessory(hap_acc);
@@ -906,7 +920,8 @@ void deviceDestoryPreventChange(devTypeDef_enum devType){
         }break;
 
         case devTypeDef_mulitSwTwoBit:
-        case devTypeDef_moudleSwTwoBit:{
+        case devTypeDef_moudleSwTwoBit:
+        case devTypeDef_relayBox_2bit:{
 
             hap_acc = hap_acc_get_by_aid(2);
             hap_remove_bridged_accessory(hap_acc);
@@ -928,7 +943,8 @@ void deviceDestoryPreventChange(devTypeDef_enum devType){
         }break;
 
         case devTypeDef_curtain:
-        case devTypeDef_moudleSwCurtain:{
+        case devTypeDef_moudleSwCurtain:
+        case devTypeDef_relayBox_curtain:{
 
             hap_acc = hap_acc_get_by_aid(5);
             hap_remove_bridged_accessory(hap_acc);
@@ -958,6 +974,7 @@ void deviceStatusUpdateToHT(stt_devDataPonitTypedef *staVal){
         case devTypeDef_moudleSwOneBit:
         case devTypeDef_mulitSwTwoBit:
         case devTypeDef_moudleSwTwoBit:
+        case devTypeDef_relayBox_2bit:
         case devTypeDef_mulitSwThreeBit:
         case devTypeDef_moudleSwThreeBit:{
 
@@ -966,10 +983,12 @@ void deviceStatusUpdateToHT(stt_devDataPonitTypedef *staVal){
             switch(currentDev_typeGet()){
 
                 case devTypeDef_mulitSwOneBit:
-                case devTypeDef_moudleSwOneBit:creatLoop = 1;break;
+                case devTypeDef_moudleSwOneBit:
+                case devTypeDef_relayBox_1bit:creatLoop = 1;break;
 
                 case devTypeDef_mulitSwTwoBit:
-                case devTypeDef_moudleSwTwoBit:creatLoop = 2;break;
+                case devTypeDef_moudleSwTwoBit:
+                case devTypeDef_relayBox_2bit:creatLoop = 2;break;
 
                 case devTypeDef_mulitSwThreeBit:
                 case devTypeDef_moudleSwThreeBit:creatLoop = 3;break;
@@ -984,12 +1003,23 @@ void deviceStatusUpdateToHT(stt_devDataPonitTypedef *staVal){
                 hap_char = hap_serv_get_char_by_uuid(hap_serv, HAP_CHAR_UUID_ON);
                 (statusHex & (1 << (loop)))?(appliance_value.i = 1):(appliance_value.i = 0);
 
-                hap_char_update_val(hap_char, &appliance_value);
+                ESP_LOGI(TAG, "HK data reales res:%d", hap_char_update_val(hap_char, &appliance_value));
             }
         } 
 
+        case devTypeDef_relayBox_1bit:{
+
+                hap_acc = hap_acc_get_by_aid(3);
+                hap_serv = hap_acc_get_serv_by_uuid(hap_acc, HAP_SERV_UUID_SWITCH);
+                hap_char = hap_serv_get_char_by_uuid(hap_serv, HAP_CHAR_UUID_ON);
+                (statusHex & (1 << 0))?(appliance_value.i = 1):(appliance_value.i = 0);
+
+                ESP_LOGI(TAG, "HK data reales res:%d", hap_char_update_val(hap_char, &appliance_value));
+        }break;
+
         case devTypeDef_curtain:
-        case devTypeDef_moudleSwCurtain:{
+        case devTypeDef_moudleSwCurtain:
+        case devTypeDef_relayBox_curtain:{
 
             uint8_t positionTemp = 0;
 
@@ -1009,15 +1039,18 @@ void deviceStatusUpdateToHT(stt_devDataPonitTypedef *staVal){
                 }
             }
 
-            hap_acc = hap_acc_get_by_aid(5);
+            if(devTypeDef_relayBox_curtain == currentDev_typeGet())hap_acc = hap_acc_get_by_aid(2);
+            else hap_acc = hap_acc_get_by_aid(5);
             hap_serv = hap_acc_get_serv_by_uuid(hap_acc, HAP_SERV_UUID_WINDOW_COVERING);
             hap_char = hap_serv_get_char_by_uuid(hap_serv, HAP_CHAR_UUID_TARGET_POSITION);
             appliance_value.i = positionTemp;
             hap_char_update_val(hap_char, &appliance_value);
+            // ESP_LOGI(TAG, "HK data reales res:%d", hap_char_update_val(hap_char, &appliance_value));
 
             hap_char = hap_serv_get_char_by_uuid(hap_serv, HAP_CHAR_UUID_CURRENT_POSITION);
             appliance_value.i = positionTemp;
             hap_char_update_val(hap_char, &appliance_value);
+            // ESP_LOGI(TAG, "HK data reales res:%d", hap_char_update_val(hap_char, &appliance_value));
 
         }break;
 

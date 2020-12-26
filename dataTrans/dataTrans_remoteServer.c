@@ -383,7 +383,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 				
 				ret = mwifi_root_write((const uint8_t *)&event->data[MACADDR_INSRT_START_CMDCONTROL], 1,
 									   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDCONTROL + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-				MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+				USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 			}
 
 		}break;
@@ -412,7 +412,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 				
 				ret = mwifi_root_write((const uint8_t *)&event->data[MACADDR_INSRT_START_CMDDEVLOCK], 1,
 									   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDDEVLOCK + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-				MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+				USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 			}
 
 		}break;
@@ -481,7 +481,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 				
 				ret = mwifi_root_write((const uint8_t *)&event->data[targetMacIstStart], 1,
 									   &data_type, dataRespond_temp, event->data_len + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-				MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+				USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 			}
 		
 		}break;
@@ -563,7 +563,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 				
 				ret = mwifi_root_write((const uint8_t *)&event->data[targetMacIstStart], 1,
 									   &data_type, dataRespond_temp, event->data_len + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-				MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+				USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 			}
 			
 		}break;
@@ -587,7 +587,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 				
 				ret = mwifi_root_write((const uint8_t *)&event->data[targetMacIstStart], 1,
 									   &data_type, dataRespond_temp, event->data_len + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-				MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+				USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 			}
 
 		}break;
@@ -653,7 +653,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 
 				ret = mwifi_root_write((const uint8_t *)&event->data[MACADDR_INSRT_START_CMDTIMERSET], 1,
 									   &data_type, dataRespond_temp, dataForward_len, true); // +1代表mesh内部传输时添加第一字节为命令字节
-				MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+				USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 			}
 
 		}break;
@@ -684,7 +684,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 				
 				ret = mwifi_root_write((const uint8_t *)&event->data[MACADDR_INSRT_START_CMDDELAYSET], 1,
 									   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDDELAYSET + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-				MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+				USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 			}
 
 		}break;
@@ -710,7 +710,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 				
 				ret = mwifi_root_write((const uint8_t *)&event->data[MACADDR_INSRT_START_CMDGREENMODESET], 1,
 									   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDGREENMODESET + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-				MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+				USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 			}
 
 		}break;
@@ -752,7 +752,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 				
 				ret = mwifi_root_write((const uint8_t *)&event->data[MACADDR_INSRT_START_CMDNIGHTMODESET], 1,
 									   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDNIGHTMODESET + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-				MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+				USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 			}
 
 		}break;
@@ -774,7 +774,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 				
 				ret = mwifi_root_write((const uint8_t *)&event->data[MACADDR_INSRT_START_CMDEXTPARAMSET], 1,
 									   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDEXTPARAMSET + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-				MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+				USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 			}
 
 		}break;
@@ -872,7 +872,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 
 						ret = mwifi_root_write((const uint8_t *)mutualGroupParamRcv_temp.devMac, 1,
 											   &data_type, dataRespond_temp, event->data_len + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-						MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+						USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 					}
 				}
 			}
@@ -959,7 +959,9 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 				
 					ret = mwifi_root_write((const uint8_t *)scenarioActionParam_unit.devMacAddr, 1,
 										 &data_type, dataRespond_temp, 1 + 1, true);  //数据内容填充 -头命令长度1 + 操作值数据长度1
-					MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));					
+					USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+
+					printf("scene targetMac<"MACSTR">, selfMac"MACSTR".\n", MAC2STR(scenarioActionParam_unit.devMacAddr), MAC2STR(devSelfMac));				
 				}
 			}
 
@@ -1014,7 +1016,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 				
 				ret = mwifi_root_write((const uint8_t *)&(event->data[targetMacIstStart]), 1,
 									   &data_type, dataMeshReq_bufTemp, event->data_len + 1, true);  //数据内容填充 -头命令长度1 + 操作值数据长度1
-				MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));	
+				USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));	
 
 				os_free(dataMeshReq_bufTemp);
 			}
@@ -1090,7 +1092,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 			memcpy(&dataRespond_temp[1], &dtMqttParamTemp, sizeof(dtMqttParamTemp)); //数据
 			
 			ret = mwifi_root_write(boardcastAddr, 1, &data_type, dataRespond_temp, sizeof(dtMqttParamTemp) + 1, true);  //数据内容填充 -头命令长度1 + 操作值数据长度1
-			MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret)); 
+			USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret)); 
 
 			//操作结果回复
 			memset(dataRespond_temp, 0, DEVMQTT_DATA_RESPOND_LENGTH);
@@ -1131,7 +1133,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 			memcpy(&dataRespond_temp[1], &dtMqttParamTemp, sizeof(stt_mqttExServerCfgParam)); //数据
 			
 			ret = mwifi_root_write(boardcastAddr, 1, &data_type, dataRespond_temp, sizeof(stt_mqttExServerCfgParam) + 1, true);  //数据内容填充 -头命令长度1 + 操作值数据长度1
-			MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret)); 
+			USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret)); 
 
 			//操作结果回复
 			memset(dataRespond_temp, 0, DEVMQTT_DATA_RESPOND_LENGTH);
@@ -1181,7 +1183,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 			memcpy(&dataRespond_temp[1], event->data, event->data_len); //数据
 			
 			ret = mwifi_root_write(boardcastAddr, 1, &data_type, dataRespond_temp, event->data_len + 1, true);  //数据内容填充 -头命令长度1 + 操作值数据长度1
-			MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret)); 
+			USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret)); 
 
 		}break;
 
@@ -1246,7 +1248,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 				
 						ret = mwifi_root_write((const uint8_t *)devLockOpreatParam_unit.devMacAddr, 1,
 											 &data_type, dataRespond_temp, 1 + 1, true);  //数据内容填充 -头命令长度1 + 操作值数据长度1
-						MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret)); 				
+						USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret)); 				
 					}
 				}
 			}
@@ -1283,7 +1285,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 				
 				ret = mwifi_root_write(boardcastAddr, 1,
 									 &data_type, dataRespond_temp, 1 + 1, true);  //数据内容填充 -头命令长度1 + 操作值数据长度1
-				MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+				USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 			}
 			else //选改
 			{
@@ -1305,7 +1307,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 					
 						ret = mwifi_root_write((const uint8_t *)uiThemeStyleParam_unit.devMacAddr, 1,
 											 &data_type, dataRespond_temp, 1 + 1, true);  //数据内容填充 -头命令长度1 + 操作值数据长度1
-						MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret)); 				
+						USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret)); 				
 					}
 				}
 			}
@@ -1371,7 +1373,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 					memcpy(&dataRespond_temp[1], (uint8_t *)&firewareVersionNum, 1); //数据
 					
 					ret = mwifi_root_write((const uint8_t *)&(event->data[targetMacIstStart]), 1, &data_type, dataRespond_temp, 1 + 1, true);  //数据内容填充 -头命令长度1 + 操作值数据长度1
-					MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret)); 	
+					USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret)); 	
 				}
 			}
 			else
@@ -1441,7 +1443,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 			dataRespond_temp[1] = dispApplication_epidCyLocation_get(); //国家
 			memcpy(&dataRespond_temp[2], (uint8_t *)event->data, event->data_len); //数据
 			ret = mwifi_root_write(boardcastAddr, 1, &data_type, dataRespond_temp, event->data_len + 2, true);
-			MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret)); 
+			USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret)); 
 			
 		}break;
 #endif
@@ -1558,7 +1560,8 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 							switch(currentDev_typeGet()){ //扩展数据填装
 							
 								case devTypeDef_curtain:
-								case devTypeDef_moudleSwCurtain:{
+								case devTypeDef_moudleSwCurtain:
+								case devTypeDef_relayBox_curtain:{
 							
 									deviceStatusParam_temp.nodeDev_extFunParam[0] = devCurtain_currentPositionPercentGet();
 							
@@ -1590,7 +1593,9 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 								case devTypeDef_mulitSwTwoBit:
 								case devTypeDef_mulitSwThreeBit:
 								case devTypeDef_moudleSwOneBit:
+								case devTypeDef_relayBox_1bit:
 								case devTypeDef_moudleSwTwoBit:
+								case devTypeDef_relayBox_2bit:
 								case devTypeDef_moudleSwThreeBit:
 								case devTypeDef_dimmer:
 								case devTypeDef_fans:
@@ -1606,9 +1611,10 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 
 							printf("MAC RCV[%02X %02X %02X %02X %02X %02X].\n", MAC2STR((uint8_t *)&(event->data[dataIst_devsSpecifiedMAC])));
 
-#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)|\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)|\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)	
 							
 							devBeepTips_trig(4, 8, 100, 40, 2); //beeps提示
 #else
@@ -1636,7 +1642,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 								dataRespond_temp[0] = L8DEV_MESH_CMD_SPEQUERY_NOTICE; //mesh命令 //数据
 								
 								ret = mwifi_root_write((const uint8_t *)&(event->data[dataIst_devsSpecifiedMAC]), 1, &data_type, dataRespond_temp, 1, true);  //数据内容填充 -头命令长度1 + 操作值数据长度1
-								MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret)); 
+								USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret)); 
 
 								printf("MAC RCV[%02X %02X %02X %02X %02X %02X].\n", MAC2STR((uint8_t *)&(event->data[dataIst_devsSpecifiedMAC])));
 							}
@@ -1749,7 +1755,7 @@ static void mqtt_remoteDataHandler(esp_mqtt_event_handle_t event, uint8_t cmdTop
 				
 				ret = mwifi_root_write((const uint8_t *)&event->data[1], 1,
 									   &data_type, dataRespond_temp, 1 + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-				MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+				USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 			}
 
 		}break;
@@ -1988,7 +1994,7 @@ static void local_nodeDevRemoteDatatransLoop_allNodeDetailInfoReport(void){
 	memcpy(&dataRequest_buf[L8_meshDataCmdLen], &nodeDev_detailInfoTemp, sizeof(stt_devInfoDetailUpload));
 	
 	ret = mwifi_write(meshRootAddr, &data_type, dataRequest_buf, dataReqBuf_len, true);
-	MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> devDetailInfo mwifi_root_write", mdf_err_to_name(ret));
+	USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> devDetailInfo mwifi_root_write", mdf_err_to_name(ret));
 
 	if(NULL != dataRequest_buf){
 
@@ -2133,7 +2139,8 @@ bool bussinessHA_mqttDataHandle(esp_mqtt_event_handle_t event){
 							switch(devType){
 
 								case devTypeDef_mulitSwOneBit:
-								case devTypeDef_moudleSwOneBit:{
+								case devTypeDef_moudleSwOneBit:
+								case devTypeDef_relayBox_1bit:{
 
 									switch(opBitNum_16b){
 
@@ -2148,7 +2155,8 @@ bool bussinessHA_mqttDataHandle(esp_mqtt_event_handle_t event){
 								}break;
 
 								case devTypeDef_mulitSwTwoBit:
-								case devTypeDef_moudleSwTwoBit:{
+								case devTypeDef_moudleSwTwoBit:
+								case devTypeDef_relayBox_2bit:{
 
 									switch(opBitNum_16b){
 									
@@ -2201,7 +2209,8 @@ bool bussinessHA_mqttDataHandle(esp_mqtt_event_handle_t event){
 							switch(devType){
 
 								case devTypeDef_mulitSwOneBit:
-								case devTypeDef_moudleSwOneBit:{
+								case devTypeDef_moudleSwOneBit:
+								case devTypeDef_relayBox_1bit:{
 
 									switch(opBitNum_16b){
 
@@ -2216,7 +2225,8 @@ bool bussinessHA_mqttDataHandle(esp_mqtt_event_handle_t event){
 								}break;
 
 								case devTypeDef_mulitSwTwoBit:
-								case devTypeDef_moudleSwTwoBit:{
+								case devTypeDef_moudleSwTwoBit:
+								case devTypeDef_relayBox_2bit:{
 
 									switch(opBitNum_16b){
 									
@@ -2271,7 +2281,7 @@ bool bussinessHA_mqttDataHandle(esp_mqtt_event_handle_t event){
 							
 							ret = mwifi_root_write((const uint8_t *)macTarget_8b, 1,
 												   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDCONTROL + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-							MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+							USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 						}
 
 						free(devNode);
@@ -2317,7 +2327,7 @@ bool bussinessHA_mqttDataHandle(esp_mqtt_event_handle_t event){
 					
 					ret = mwifi_root_write((const uint8_t *)macTarget_8b, 1,
 										   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDCONTROL + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-					MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+					USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 					if(ret != MDF_OK){
 
 						haCmdRsv_flg = false;
@@ -2349,7 +2359,7 @@ bool bussinessHA_mqttDataHandle(esp_mqtt_event_handle_t event){
 					
 					ret = mwifi_root_write((const uint8_t *)macTarget_8b, 1,
 										   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDCONTROL + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-					MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+					USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 					if(ret != MDF_OK){
 
 						haCmdRsv_flg = false;
@@ -2381,7 +2391,7 @@ bool bussinessHA_mqttDataHandle(esp_mqtt_event_handle_t event){
 					
 					ret = mwifi_root_write((const uint8_t *)macTarget_8b, 1,
 										   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDCONTROL + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-					MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+					USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 					if(ret != MDF_OK){
 
 						haCmdRsv_flg = false;
@@ -2428,7 +2438,7 @@ bool bussinessHA_mqttDataHandle(esp_mqtt_event_handle_t event){
 						
 						ret = mwifi_root_write((const uint8_t *)macTarget_8b, 1,
 											   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDCONTROL + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-						MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+						USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 
 						free(devNode);
 					}
@@ -2465,7 +2475,7 @@ bool bussinessHA_mqttDataHandle(esp_mqtt_event_handle_t event){
 					
 					ret = mwifi_root_write((const uint8_t *)macTarget_8b, 1,
 										   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDCONTROL + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-					MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+					USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 					if(ret != MDF_OK){
 
 						haCmdRsv_flg = false;
@@ -2497,7 +2507,7 @@ bool bussinessHA_mqttDataHandle(esp_mqtt_event_handle_t event){
 					
 					ret = mwifi_root_write((const uint8_t *)macTarget_8b, 1,
 										   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDCONTROL + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-					MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+					USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 					if(ret != MDF_OK){
 
 						haCmdRsv_flg = false;
@@ -2550,7 +2560,7 @@ bool bussinessHA_mqttDataHandle(esp_mqtt_event_handle_t event){
 					
 					ret = mwifi_root_write((const uint8_t *)macTarget_8b, 1,
 										   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDCONTROL + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-					MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+					USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 					if(ret != MDF_OK){
 
 						haCmdRsv_flg = false;
@@ -2610,7 +2620,7 @@ bool bussinessHA_mqttDataHandle(esp_mqtt_event_handle_t event){
 
 						ret = mwifi_root_write((const uint8_t *)macTarget_8b, 1,
 											   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDCONTROL + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-						MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));	
+						USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));	
 
 						free(devNode);
 					}
@@ -2651,7 +2661,7 @@ bool bussinessHA_mqttDataHandle(esp_mqtt_event_handle_t event){
 			
 						ret = mwifi_root_write((const uint8_t *)macTarget_8b, 1,
 											   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDCONTROL + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-						MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));	
+						USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));	
 			
 						free(devNode);
 					}
@@ -2726,7 +2736,7 @@ bool bussinessHA_mqttDataHandle(esp_mqtt_event_handle_t event){
 				
 						ret = mwifi_root_write((const uint8_t *)macTarget_8b, 1,
 											   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDCONTROL + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-						MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));	
+						USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));	
 				
 						free(devNode);
 					}
@@ -2780,7 +2790,7 @@ bool bussinessHA_mqttDataHandle(esp_mqtt_event_handle_t event){
 				
 						ret = mwifi_root_write((const uint8_t *)macTarget_8b, 1,
 											   &data_type, dataRespond_temp, MACADDR_INSRT_START_CMDCONTROL + 1, true); // +1代表mesh内部传输时添加第一字节为命令字节
-						MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));	
+						USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));	
 				
 						free(devNode);
 					}
@@ -3028,7 +3038,7 @@ void mqtt_rootDevLoginConnectNotice_trig(void){
 			dataRequest_temp[0] = L8DEV_MESH_CMD_EPID_DATA_REQ; //命令加载
 			
 			ret = mwifi_write(meshRootAddr, &data_type, dataRequest_temp, 1, true);
-			MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> heartbeat mwifi_root_write", mdf_err_to_name(ret));
+			USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> heartbeat mwifi_root_write", mdf_err_to_name(ret));
 
 			printf("slave device epidemicData reverse request.\n");
 		}
@@ -3206,7 +3216,9 @@ void homeassistantApp_devStateSetSynchronous(esp_mqtt_client_handle_t client, ui
 		case devTypeDef_mulitSwTwoBit:
 		case devTypeDef_mulitSwThreeBit:
 		case devTypeDef_moudleSwOneBit:
+		case devTypeDef_relayBox_1bit:
 		case devTypeDef_moudleSwTwoBit:
+		case devTypeDef_relayBox_2bit:
 		case devTypeDef_moudleSwThreeBit:{
 
 			uint8_t noticePeriod = 0;
@@ -3221,6 +3233,7 @@ void homeassistantApp_devStateSetSynchronous(esp_mqtt_client_handle_t client, ui
 
 				case devTypeDef_mulitSwTwoBit:
 				case devTypeDef_moudleSwTwoBit:
+				case devTypeDef_relayBox_2bit:
 				
 					noticePeriod = 2;
 					break;
@@ -3257,7 +3270,8 @@ void homeassistantApp_devStateSetSynchronous(esp_mqtt_client_handle_t client, ui
 		}break;
 		
 		case devTypeDef_curtain:
-		case devTypeDef_moudleSwCurtain:{
+		case devTypeDef_moudleSwCurtain:
+		case devTypeDef_relayBox_curtain:{
 	
 			memcpy(&stateTemp, &status, sizeof(uint8_t));
 	
@@ -3684,9 +3698,12 @@ void homeassistantApp_devOnlineSynchronous(esp_mqtt_client_handle_t client, uint
 		}break;
 
 		case devTypeDef_moudleSwOneBit:
+		case devTypeDef_relayBox_1bit:
 		case devTypeDef_moudleSwTwoBit:
+		case devTypeDef_relayBox_2bit:
 		case devTypeDef_moudleSwThreeBit:
 		case devTypeDef_moudleSwCurtain:
+		case devTypeDef_relayBox_curtain:
 		case devTypeDef_infrared:
 		case devTypeDef_socket:{ //不带屏幕类开关直接进行状态同步通知
 
@@ -3779,7 +3796,7 @@ void devFireware_upgradeReserveCheck(void){
 	// 		memcpy(&dataRequest_temp[1], dataRespond_temp, sizeof(uint8_t) * dataTransLength_limit); //下标0为nesh命令，全部向后挪一个字节
 
 	// 		ret = mwifi_write(meshRootAddr, &data_type, dataRequest_temp, sizeof(uint8_t) * dataTransLength_limit + 1, true);
-	// 		MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mdf firewareRsv check res", mdf_err_to_name(ret));
+	// 		USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mdf firewareRsv check res", mdf_err_to_name(ret));
 	// 	}
 	// }
 }
@@ -3787,6 +3804,11 @@ void devFireware_upgradeReserveCheck(void){
 void devFireware_upgradeReserveCheck_trigByEvent(void){
 
 	xEventGroupSetBits(xEventGp_devApplication, DEVAPPLICATION_FLG_DEVNODE_UPGRADE_CHECK);
+}
+
+bool devSystemMqttIsConnected(void){
+
+	return remoteMqtt_connectFlg;
 }
 
 void mqtt_app_start(void){

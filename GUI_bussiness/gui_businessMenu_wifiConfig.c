@@ -149,6 +149,7 @@ static lv_style_t *styleBtnm_qrSelect_btnPre = NULL;
 static lv_style_t *styleBtnm_qrSelect_btnTglRel = NULL;
 static lv_style_t *styleBtnm_qrSelect_btnTglPre = NULL;
 static lv_style_t *styleBtnm_qrSelect_btnIna = NULL;
+static lv_style_t *styleBtnm_qrSelect_btnText = NULL;
 
 static volatile bool wifiScanning_Flg = false;
 static volatile bool keyboardCreat_Flg = false;
@@ -330,6 +331,7 @@ static lv_res_t funCb_mboxBtnActionClick_btnKbCallRestart(lv_obj_t * mbox, const
 
 				case 0:{
 
+					// hap_reset_to_factory();
 					hap_reset_network();
 					usrApplication_systemRestartTrig(3);
 
@@ -987,9 +989,10 @@ static void lvGui_businessMenu_wifiConfig_methodByQrCode(lv_obj_t * obj_Parent){
 	lv_btn_set_action(btn_qrObjSelect_A, LV_BTN_ACTION_CLICK, funCb_btnActionClick_qrCodeSelect);
 	lv_btn_set_action(btn_qrObjSelect_B, LV_BTN_ACTION_CLICK, funCb_btnActionClick_qrCodeSelect);
 	lv_obj_t * lq_A = lv_label_create(btn_qrObjSelect_A, NULL);          /*Add a label to the button*/
-	lv_label_set_text(lq_A, "HT");  
-	lv_obj_t * lq_B = lv_label_create(btn_qrObjSelect_B, NULL);          /*Add a label to the button*/
-	lv_label_set_text(lq_B, "SL");  
+	lv_obj_set_style(lq_A, styleBtnm_qrSelect_btnText);
+	lv_label_set_text(lq_A, "Homekit");  
+	lv_obj_t * lq_B = lv_label_create(btn_qrObjSelect_B, lq_A);          /*Add a label to the button*/
+	lv_label_set_text(lq_B, "Smart\nliving");  
 
 	lv_btn_set_state(btn_qrObjSelect_A, LV_BTN_STATE_TGL_REL);
 		
@@ -1478,45 +1481,46 @@ static void lvGuiMenuWifiConfig_styleMemoryInitialization(void){
 	if(true == memAlloced_flg)return;
 	else memAlloced_flg = true;
 
-	styleText_menuLevel_A 				= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuLevel_B_infoMac 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuLevel_B_infoTips 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePage_wifiConfigComplete 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleImage_wifiConfigComplete 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabelRef_wifiConfigComplete 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabelRef_wifiCfg_methodSel_info = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabelRef_wifiCfg_methodSel_btnRef = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabelRef_wifiCfg_methodSel_btnMore = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	styleText_menuLevel_A 				= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuLevel_B_infoMac 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuLevel_B_infoTips 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePage_wifiConfigComplete 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleImage_wifiConfigComplete 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabelRef_wifiConfigComplete 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabelRef_wifiCfg_methodSel_info = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabelRef_wifiCfg_methodSel_btnRef = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabelRef_wifiCfg_methodSel_btnMore = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 	
-	styleMbox_bg 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleMbox_btn_pr 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleMbox_btn_rel 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleImg_menuFun_btnFun = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_specialTransparent = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	styleMbox_bg 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleMbox_btn_pr 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleMbox_btn_rel 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleImg_menuFun_btnFun = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_specialTransparent = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 	
-	styleEmpty 						 = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePageUsrFun_wifiApListShowUp = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnUsrFun_wifiApListShowUp  = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleImageUsrFun_wifiSigRef 	 = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabelUsrFun_wifiApSsid 	 = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	styleEmpty 						 = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePageUsrFun_wifiApListShowUp = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnUsrFun_wifiApListShowUp  = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleImageUsrFun_wifiSigRef 	 = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabelUsrFun_wifiApSsid 	 = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 	
-	styleKb_usrFun_wifiCfg_btnBg 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleKb_usrFun_wifiCfg_btnRel 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleKb_usrFun_wifiCfg_btnPre 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleKb_usrFun_wifiCfg_btnTglRel = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleKb_usrFun_wifiCfg_btnTglPre = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleKb_usrFun_wifiCfg_btnIna 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylepageKbArea_KbWifiConfig 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylepageUsrFun_KbWifiConfig 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabelUsrFun_wifiConfig_psdTips = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabelUsrFun_wifiConfig_kbMoveTips = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	styleKb_usrFun_wifiCfg_btnBg 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleKb_usrFun_wifiCfg_btnRel 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleKb_usrFun_wifiCfg_btnPre 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleKb_usrFun_wifiCfg_btnTglRel = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleKb_usrFun_wifiCfg_btnTglPre = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleKb_usrFun_wifiCfg_btnIna 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylepageKbArea_KbWifiConfig 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylepageUsrFun_KbWifiConfig 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabelUsrFun_wifiConfig_psdTips = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabelUsrFun_wifiConfig_kbMoveTips = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 
-	styleBtnm_qrSelect_btnBg 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_qrSelect_btnRel 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_qrSelect_btnPre 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_qrSelect_btnTglRel 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_qrSelect_btnTglPre 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_qrSelect_btnIna 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	styleBtnm_qrSelect_btnBg 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_qrSelect_btnRel 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_qrSelect_btnPre 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_qrSelect_btnTglRel 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_qrSelect_btnTglPre 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_qrSelect_btnIna 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_qrSelect_btnText		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 }
 
 static void lvGuiStyleInit_businessMenu_wifiConfig(void){
@@ -1639,5 +1643,9 @@ static void lvGuiStyleInit_businessMenu_wifiConfig(void){
     styleBtnm_qrSelect_btnIna->body.grad_color = lv_color_hsv_to_rgb(15, 10, 20);
     styleBtnm_qrSelect_btnIna->text.color = LV_COLOR_HEX3(0xaaa);
     styleBtnm_qrSelect_btnIna->body.shadow.width = 0;
+
+	lv_style_copy(styleBtnm_qrSelect_btnText, &lv_style_plain);
+	styleBtnm_qrSelect_btnText->text.font = &lv_font_consola_16;
+	styleBtnm_qrSelect_btnText->text.color = LV_COLOR_WHITE;
 }
 

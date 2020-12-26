@@ -30,6 +30,7 @@
 
 #include "bussiness_timerSoft.h"
 
+#include "dataTrans_remoteServer.h"
 #include "dataTrans_localHandler.h"
 
 typedef void (*guiHomeFun_local_bussiness)(lv_obj_t * obj_Parent);
@@ -241,8 +242,7 @@ static struct
 
 static xQueueHandle msgQh_uiHp_devCtrlObjValChg = NULL;
 
-static lv_obj_t *imageBK = NULL; //真身
-static lv_obj_t *imageBK_corpse = NULL; //傀儡[因为littlevgl 对象对应的回调函数中创建新的对象前不能立刻删除自己本身或自己的父对象，所以需要一个傀儡做过渡]
+static lv_obj_t *imageBK = NULL; 
 static lv_obj_t *screenNull_refresher = NULL;
 
 //static lv_obj_t *imageTips_timer = NULL;
@@ -1149,7 +1149,8 @@ static lv_res_t funCb_btnActionClick_devMulitSw_mainBtnA(lv_obj_t *btn){
 
 	switch(currentDev_typeGet()){
 
-		case devTypeDef_mulitSwOneBit:{
+		case devTypeDef_mulitSwOneBit:
+		case devTypeDef_relayBox_1bit:{
 
 			devDataPoint.devType_mulitSwitch_oneBit.opCtrl_bit1 = \
 			devDataPoint.devType_mulitSwitch_oneBit.rsv = 0;
@@ -1512,6 +1513,7 @@ static lv_res_t funCb_btnActionClick_bindingBtnA(lv_obj_t *btn){
 	switch(currentDev_typeGet()){
 		
 		case devTypeDef_mulitSwOneBit:
+		case devTypeDef_relayBox_1bit:
 		case devTypeDef_mulitSwTwoBit:
 		case devTypeDef_mulitSwThreeBit:
 		case devTypeDef_dimmer:
@@ -1829,11 +1831,14 @@ static lv_res_t funCb_btnActionClick_devHeater_timeSet(lv_obj_t *btn){
 	lv_obj_align(btnCancel_timeSetPage_devHeater, btnConfirm_timeSetPage_devHeater, LV_ALIGN_CENTER, 95, 0);
 	lv_btn_set_action(btnCancel_timeSetPage_devHeater, LV_BTN_ACTION_CLICK, funCb_btnActionClick_devHeater_pageTimeSet_btnCancel);
 
-	labelConfirm_timeSetPage_devHeater = lv_label_create(btnConfirm_timeSetPage_devHeater, NULL);
+	labelConfirm_timeSetPage_devHeater = lv_label_create(page_timeSet_devHeater, NULL);
 	lv_obj_set_style(labelConfirm_timeSetPage_devHeater, styleTextBtn_devHeater_timeSetPage);
+	lv_obj_set_protect(labelConfirm_timeSetPage_devHeater, LV_PROTECT_POS);
+	lv_obj_align(labelConfirm_timeSetPage_devHeater, btnConfirm_timeSetPage_devHeater, LV_ALIGN_CENTER, 0, 0);
 	lv_label_set_text(labelConfirm_timeSetPage_devHeater, "confirm");
-	labelCancel_timeSetPage_devHeater = lv_label_create(btnCancel_timeSetPage_devHeater, labelConfirm_timeSetPage_devHeater);
+	labelCancel_timeSetPage_devHeater = lv_label_create(page_timeSet_devHeater, labelConfirm_timeSetPage_devHeater);
 	lv_obj_set_style(labelCancel_timeSetPage_devHeater, styleTextBtn_devHeater_timeSetPage);
+	lv_obj_align(labelCancel_timeSetPage_devHeater, btnCancel_timeSetPage_devHeater, LV_ALIGN_CENTER, 0, 0);
 	lv_label_set_text(labelCancel_timeSetPage_devHeater, "cancel");
 
 	usrApp_fullScreenRefresh_self(50, 0); 
@@ -2252,6 +2257,11 @@ static lv_res_t funCb_btnActionClick_homeMenu_click(lv_obj_t *btn){
 	if(menuGenerate_en)lvGui_usrSwitch(bussinessType_Menu, true);
 	lvGuiLinkageConfig_devGraphCtrlBlock_listLoadFlg_set(false);
 
+	if(menuGenerate_en){
+		if(NULL != btn_homeMenu)lv_obj_del(btn_homeMenu);btn_homeMenu = NULL;
+		if(NULL != btn_unlockMenu)lv_obj_del(btn_unlockMenu);btn_unlockMenu = NULL;
+	}
+
 	return LV_RES_OK;
 }
 
@@ -2473,6 +2483,7 @@ static void pageHeader_infoRefreshLoop(void){
 		wifi_ap_record_t apInfo = {0};
 		esp_err_t ret = ESP_OK;
 		wifi_mode_t wMode_temp = WIFI_MODE_NULL;
+		bool devMqttIsConnected = devSystemMqttIsConnected();
 		
 		ret = esp_wifi_sta_get_ap_info(&apInfo);
 		esp_wifi_get_mode(&wMode_temp);
@@ -2539,7 +2550,9 @@ static void pageHeader_infoRefreshLoop(void){
 				}
 			}
 
-			styleImg_iconWifi->image.color = scrHeaderSysInfo_baseColor;
+			(devMqttIsConnected)?
+				(styleImg_iconWifi->image.color = scrHeaderSysInfo_baseColor):
+				(styleImg_iconWifi->image.color = LV_COLOR_YELLOW);
 			lv_obj_set_style(iconHeaderObj_wifi, styleImg_iconWifi);
 		}
 		else
@@ -2821,7 +2834,8 @@ static void pageActivity_infoRefreshLoop(void){
 
 						switch(currentDev_typeGet()){
 
-							case devTypeDef_mulitSwOneBit:{
+							case devTypeDef_mulitSwOneBit:
+							case devTypeDef_relayBox_1bit:{
 
 								if(rptr_msgQ_dmHandle.msgData_dmHandle.dataAb_hpCtrlObjTextChg.objChg_bitHold & (1 << 0))
 									lv_label_set_text(textBtn_meeting, (const char*)dataTextObjDisp_temp.dataBtnTextDisp[0]);
@@ -2886,7 +2900,8 @@ static void pageActivity_infoRefreshLoop(void){
 					
 						switch(currentDev_typeGet()){
 						
-							case devTypeDef_mulitSwOneBit:{
+							case devTypeDef_mulitSwOneBit:
+							case devTypeDef_relayBox_1bit:{
 
 								if(rptr_msgQ_dmHandle.msgData_dmHandle.dataAb_hpCtrlObjIconChg.objChg_bitHold & (1 << 0))
 									lv_img_set_src(iconBtn_meeting, usrAppHomepageBtnIconDisp_dataGet(dataIconObjDisp_temp[0]));
@@ -2958,7 +2973,8 @@ static void pageActivity_infoRefreshLoop(void){
 
 							switch(currentDev_typeGet()){
 							
-								case devTypeDef_mulitSwOneBit:{
+								case devTypeDef_mulitSwOneBit:
+								case devTypeDef_relayBox_1bit:{
 							
 									(devDataPoint.devType_mulitSwitch_threeBit.swVal_bit1)?(lv_imgbtn_set_src(btn_bk_devMulitSw_A, LV_BTN_STATE_REL, usrAppHomepageBtnBkPic_dataGet(true))):(lv_imgbtn_set_src(btn_bk_devMulitSw_A, LV_BTN_STATE_REL, usrAppHomepageBtnBkPic_dataGet(false)));
 									(devDataPoint.devType_mulitSwitch_threeBit.swVal_bit1)?(lv_img_set_style(iconBtn_meeting, styleIconvText_devMulitSw_statusOn)):(lv_img_set_style(iconBtn_meeting, styleIconvText_devMulitSw_statusOff));
@@ -3070,7 +3086,8 @@ static void pageActivity_infoRefreshLoop(void){
 
 				switch(currentDev_typeGet()){
 
-					case devTypeDef_mulitSwOneBit:{
+					case devTypeDef_mulitSwOneBit:
+					case devTypeDef_relayBox_1bit:{
 
 						if(btnBindingStatus_record[0] != btnBindingStatus_temp[0]){
 
@@ -3718,7 +3735,8 @@ void pageHome_buttonMain_imageRefresh(bool freshNoRecord){ //界面切换时调�
 
 			switch(currentDev_typeGet()){
 	
-				case devTypeDef_mulitSwOneBit:{
+				case devTypeDef_mulitSwOneBit:
+				case devTypeDef_relayBox_1bit:{
 
 					if(devDataPoint_record.devType_mulitSwitch_oneBit.swVal_bit1 != devDataPoint.devType_mulitSwitch_oneBit.swVal_bit1){
 						
@@ -4813,12 +4831,12 @@ static void local_guiHomeBussiness_thermostat(lv_obj_t * obj_Parent){
 	lv_cb_set_text(cb_devEcoEnable_devThermostat, "ECO");
 	lv_cb_set_checked(cb_devEcoEnable_devThermostat, devParam_thermostat.workModeInNight_IF);
 
-	textBtn_tempAdjAdd_devThermostat = lv_label_create(btn_tempAdjAdd_devThermostat, NULL);
+	textBtn_tempAdjAdd_devThermostat = lv_label_create(obj_Parent, NULL);
 	lv_label_set_text(textBtn_tempAdjAdd_devThermostat, "+");
 	lv_label_set_style(textBtn_tempAdjAdd_devThermostat, styleTextBtnBk_devThermostat_tempAdj);
 	lv_obj_set_protect(textBtn_tempAdjAdd_devThermostat, LV_PROTECT_POS);
 	lv_obj_align(textBtn_tempAdjAdd_devThermostat, btn_tempAdjAdd_devThermostat, LV_ALIGN_CENTER, 0, 0);
-	textBtn_tempAdjCut_devThermostat = lv_label_create(btn_tempAdjCut_devThermostat, NULL);
+	textBtn_tempAdjCut_devThermostat = lv_label_create(obj_Parent, NULL);
 	lv_label_set_text(textBtn_tempAdjCut_devThermostat, "_");	
 	lv_label_set_style(textBtn_tempAdjCut_devThermostat, styleTextBtnBk_devThermostat_tempAdj);
 	lv_obj_set_protect(textBtn_tempAdjCut_devThermostat, LV_PROTECT_POS);
@@ -5448,40 +5466,6 @@ static void lvGui_businessHome(lv_obj_t * obj_Parent){
 	lv_btn_set_action(btn_unlockMenu, LV_BTN_ACTION_LONG_PR, 		funCb_btnActionClick_homeUnlock_click);
 	lv_btn_set_action(btn_unlockMenu, LV_BTN_ACTION_LONG_PR_REPEAT, funCb_btnActionClick_homeUnlock_longPre);
 
-	tv_homeLayout = lv_tabview_create(obj_Parent, NULL);
-	lv_tabview_set_style(tv_homeLayout, LV_TABVIEW_STYLE_BG, &lv_style_transp);
-	lv_tabview_set_style(tv_homeLayout, LV_TABVIEW_STYLE_BTN_BG, &lv_style_transp);
-	lv_tabview_set_style(tv_homeLayout, LV_TABVIEW_STYLE_BTN_REL, &lv_style_transp);
-	lv_tabview_set_style(tv_homeLayout, LV_TABVIEW_STYLE_BTN_PR, &lv_style_transp);
-	lv_tabview_set_style(tv_homeLayout, LV_TABVIEW_STYLE_BTN_TGL_REL, &lv_style_transp);
-	lv_tabview_set_style(tv_homeLayout, LV_TABVIEW_STYLE_BTN_TGL_PR, &lv_style_transp);
-	lv_tabview_set_btns_pos(tv_homeLayout, LV_TABVIEW_BTNS_POS_BOTTOM);
-	lv_tabview_set_anim_time(tv_homeLayout, 50);
-	devStatusDispMethod_landscapeIf_get()?
-		(lv_obj_set_size(tv_homeLayout, 340, 300)):
-		(lv_obj_set_size(tv_homeLayout, 260, 380));
-	lv_obj_set_protect(tv_homeLayout, LV_PROTECT_POS);
-	lv_obj_set_pos(tv_homeLayout, -10, -10);
-	lv_tabview_set_tab_load_action(tv_homeLayout, funCb_tabLoad_homeTabviewChg);
-
-	tb_homePage_A = lv_tabview_add_tab(tv_homeLayout, "p_A");
-	lv_page_set_sb_mode(tb_homePage_A, LV_SB_MODE_HIDE);
-	lv_page_set_scrl_fit(tb_homePage_A, false, false);
-	if(devStatusDispMethod_landscapeIf_get()){
-
-		lv_obj_set_size(tb_homePage_A, 330, 251);
-		
-		lv_page_set_scrl_width(tb_homePage_A, 320); 
-		lv_page_set_scrl_height(tb_homePage_A, 240); 
-	}
-	else
-	{
-		lv_obj_set_size(tb_homePage_A, 251, 330);
-		
-		lv_page_set_scrl_width(tb_homePage_A, 240); //scrl尺寸必须大于set size尺寸 才可以进行拖拽
-		lv_page_set_scrl_height(tb_homePage_A, 320); //scrl尺寸必须大于set size尺寸 才可以进行拖拽
-	}
-
 	switch(bGroundImg_themeParam.bGround_picOrg_ist){
 
 		case bGroudImg_objInsert_usrPic:
@@ -5543,34 +5527,18 @@ static void lvGui_businessHome(lv_obj_t * obj_Parent){
 		default:break;
 	}
 
-	for(loop = 0; loop < DEVICE_TYPE_LIST_NUM; loop ++){
-
-		if(devType_temp == guiHomeBussiness_tab[loop].currentDevType){
-
-			guiHomeBussiness_tab[loop].guiHome_disp(tb_homePage_A);
-			break;
-		}
-	}
-
 	if(1 == devStatusRecordFlg_temp.devListManager_En){
 
-		tb_homePage_B = lv_tabview_add_tab(tv_homeLayout, "p_B");
-		lv_page_set_sb_mode(tb_homePage_B, LV_SB_MODE_HIDE);
-		lv_page_set_scrl_fit(tb_homePage_B, false, false);
-		if(devStatusDispMethod_landscapeIf_get()){
-		
-			lv_obj_set_size(tb_homePage_B, 345, 240);
-			lv_page_set_scrl_width(tb_homePage_B, 340); 
-			lv_page_set_scrl_height(tb_homePage_B, 240); 
-		}
-		else
-		{
-			lv_obj_set_size(tb_homePage_B, 265, 320);
-			lv_page_set_scrl_width(tb_homePage_B, 260); //scrl尺寸必须大于set size尺寸 才可以进行拖拽
-			lv_page_set_scrl_height(tb_homePage_B, 320); //scrl尺寸必须大于set size尺寸 才可以进行拖拽
-		}
+	}else{
 
-		lvGuiLinkageConfig_devGraphCtrlBlock_listLoadPrePage(tb_homePage_B);
+		for(loop = 0; loop < DEVICE_TYPE_LIST_NUM; loop ++){
+
+			if(devType_temp == guiHomeBussiness_tab[loop].currentDevType){
+
+				guiHomeBussiness_tab[loop].guiHome_disp(obj_Parent);
+				break;
+			}
+		}
 	}
 	
 //	vTaskDelay(50 / portTICK_PERIOD_MS);
@@ -5588,6 +5556,10 @@ void lvglUsrApp_touchDisTrig(uint16_t timeDelay, uint16_t timeKeep){
 }
 
 void usrApp_fullScreenRefresh_self(uint16_t freshTime, lv_coord_t y){
+
+	const bool refreshEnable = false; //自刷新使能
+
+	if(false == refreshEnable)return; //自刷新使能判断
 
 	if(pageRefreshTrig_counter != COUNTER_DISENABLE_MASK_SPECIALVAL_U16){
 
@@ -6224,7 +6196,7 @@ static void task_guiSwitch_Detecting(void *pvParameter){
 			if(devRunningTimeFromPowerUp_couter > 4){
 
 				uiBlockFlg_systemInit = true;
-				lvGui_usrAppBussinessRunning_block(0, "system\ninitializing...", 30);
+				lvGui_usrAppBussinessRunning_block(0, "system\ninitializing...", 7);
 			}
 		}
 
@@ -6814,9 +6786,10 @@ void lvGui_usrAppBussinessRunning_block(uint8_t iconType, const char *strTips, u
 
 void lvGui_tipsFullScreen_generate(const char *strTips, uint16_t timeOut){
 
-#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)|\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)|\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)	
 
 	devTipsStatusRunning_abnormalTrig(tipsRunningStatus_upgrading, timeOut);	
 #else
@@ -6889,9 +6862,7 @@ static void lvGui_usrSwitch(usrGuiBussiness_type guiPage, bool corpse_if){
 	
 		guiPage_record = guiPage_current;
 
-		(true == corpse_if)?
-			(imageBK_corpse = imageBK):
-			(lv_obj_del(imageBK));
+		lv_obj_del(imageBK);
 	
 		lv_style_copy(styleBk_secMenu, &lv_style_plain);
 		
@@ -7064,7 +7035,6 @@ static void lvGui_usrSwitch(usrGuiBussiness_type guiPage, bool corpse_if){
 
 		usrAppBgroudObj_styleRefresh();
 
-		if((true == corpse_if))lv_obj_del(imageBK_corpse); //傀儡删除
 		switch(currentDev_typeGet()){ //删除对象后补充进行NULL赋值,防止一些业务对象动态生成紊乱
 
 			case devTypeDef_thermostat:
@@ -7103,107 +7073,107 @@ static void lvGuiHome_styleMemoryInitialization(void){
 
 	localMemory_lvObjStyle_mallocedFlg = true;
 
-	styleLabel_epidTitle 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabel_epidCurDate 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabel_epidNum 				= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabel_epidRef 				= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabel_epidLocation 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	styleLabel_epidTitle 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabel_epidCurDate 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabel_epidNum 				= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabel_epidRef 				= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabel_epidLocation 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 
-	styleLabel_scrsaverA_time 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabel_scrsaverA_timeDot 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabel_scrsaverA_date 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSsrBaseObj[0] 				= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSsrBaseObj[1] 				= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSsrBaseObj[2] 				= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSsrBaseIcon[0] 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSsrBaseIcon[1] 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSsrBaseIcon[2] 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSsrBaseLabel[0] 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSsrBaseLabel[1] 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSsrBaseLabel[2] 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	styleLabel_scrsaverA_time 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabel_scrsaverA_timeDot 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabel_scrsaverA_date 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSsrBaseObj[0] 				= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSsrBaseObj[1] 				= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSsrBaseObj[2] 				= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSsrBaseIcon[0] 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSsrBaseIcon[1] 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSsrBaseIcon[2] 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSsrBaseLabel[0] 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSsrBaseLabel[1] 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSsrBaseLabel[2] 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 
-	styleImg_iconHeater 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleImg_iconWifi 				= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_versionDiscrib 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_elecAnodenum 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_temperature 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_loopTimerTips 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_time 					= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleIcon_meshNode 				= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_Text 					= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBgPic_colorStyle 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBk_secMenu 				= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_devMulitSw_statusOn 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_devMulitSw_statusOff 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleIconvText_devMulitSw_statusOn = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleIconvText_devMulitSw_statusOff = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnImg_icon 				= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSliderBk_devDimmer_bg 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSliderBk_devDimmer_indic 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSliderBk_devDimmer_knob 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePhotoAk_devDimmer 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePhotoBk_devDimmer 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_devDimmer_SliderBk 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_devHeater_Bk_timeRemind = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_devCurtain_Bk_positionCurr = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_devCurtain_Bk_positionTips = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_devCurtain_statusPre 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_devCurtain_statusRel 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleImageBk_devCurtain_bkImgBody = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSliderBk_devCurtain_bg 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSliderBk_devCurtain_indic 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSliderBk_devCurtain_knob 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleImage_devFans_icon 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_devFans_instract 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_devFans_btnBg 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_devFans_btnRel 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_devFans_btnPre 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_devFans_btnTglRel 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_devFans_btnTglPre 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_devFans_btnIna 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleImage_devHeater_icon 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_devHeater_timeInstTar = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_devHeater_timeInstCur = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_devHeater_btnBg 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_devHeater_btnRel 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_devHeater_btnPre 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_devHeater_btnTglRel 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_devHeater_btnTglPre 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtnm_devHeater_btnIna 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePage_devHeater_timeSet 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleTextBtn_devHeater_timeSetPage = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleTextRoller_devHeater_timeSetPage_bg = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleTextRoller_devHeater_timeSetPage_sel = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleTextRollerTips_devHeater_timeSetPage = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLmeter_devThermostat_tempTarget = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLmeter_devThermostat_tempCurrent = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabel_devThermostat_tempTarget = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabel_devThermostat_tempCurrent = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSliderBk_devThermostat_bg = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSliderBk_devThermostat_indic = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSliderBk_devThermostat_knob = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleTextBtnBk_devThermostat_tempAdj = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleCb_devThermostat_EcoEnText = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleCb_devThermostat_EcoEnBoxRel = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleCb_devThermostat_EcoEnBoxTgRel = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleRoller_thermostatGearSel_bg =  (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleRoller_thermostatGearSel_sel =  (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_thermostatVentFan_rel	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_thermostatVentFan_pre	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_thermostatEx_btnFold 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePreload_devScenario_driverCalmDown = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_devScenario_driverCalmDown = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleImgBk_underlying 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylebtnBk_transFull 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePage_sysRestartTips 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabelCounter_sysRestartTips = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabelRef_sysRestartTips 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleIconBinding_reserveIf 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePage_guiBlockTips		 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabelRef_guiBlockTips 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePreload_guiBlockTips 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	styleImg_iconHeater 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleImg_iconWifi 				= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_versionDiscrib 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_elecAnodenum 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_temperature 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_loopTimerTips 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_time 					= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleIcon_meshNode 				= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_Text 					= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBgPic_colorStyle 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBk_secMenu 				= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_devMulitSw_statusOn 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_devMulitSw_statusOff 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleIconvText_devMulitSw_statusOn = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleIconvText_devMulitSw_statusOff = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnImg_icon 				= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSliderBk_devDimmer_bg 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSliderBk_devDimmer_indic 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSliderBk_devDimmer_knob 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePhotoAk_devDimmer 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePhotoBk_devDimmer 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_devDimmer_SliderBk 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_devHeater_Bk_timeRemind = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_devCurtain_Bk_positionCurr = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_devCurtain_Bk_positionTips = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_devCurtain_statusPre 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_devCurtain_statusRel 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleImageBk_devCurtain_bkImgBody = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSliderBk_devCurtain_bg 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSliderBk_devCurtain_indic 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSliderBk_devCurtain_knob 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleImage_devFans_icon 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_devFans_instract 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_devFans_btnBg 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_devFans_btnRel 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_devFans_btnPre 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_devFans_btnTglRel 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_devFans_btnTglPre 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_devFans_btnIna 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleImage_devHeater_icon 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_devHeater_timeInstTar = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_devHeater_timeInstCur = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_devHeater_btnBg 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_devHeater_btnRel 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_devHeater_btnPre 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_devHeater_btnTglRel 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_devHeater_btnTglPre 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtnm_devHeater_btnIna 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePage_devHeater_timeSet 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleTextBtn_devHeater_timeSetPage = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleTextRoller_devHeater_timeSetPage_bg = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleTextRoller_devHeater_timeSetPage_sel = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleTextRollerTips_devHeater_timeSetPage = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLmeter_devThermostat_tempTarget = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLmeter_devThermostat_tempCurrent = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabel_devThermostat_tempTarget = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabel_devThermostat_tempCurrent = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSliderBk_devThermostat_bg = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSliderBk_devThermostat_indic = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSliderBk_devThermostat_knob = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleTextBtnBk_devThermostat_tempAdj = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleCb_devThermostat_EcoEnText = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleCb_devThermostat_EcoEnBoxRel = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleCb_devThermostat_EcoEnBoxTgRel = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleRoller_thermostatGearSel_bg =  (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleRoller_thermostatGearSel_sel =  (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_thermostatVentFan_rel	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_thermostatVentFan_pre	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_thermostatEx_btnFold 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePreload_devScenario_driverCalmDown = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_devScenario_driverCalmDown = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleImgBk_underlying 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylebtnBk_transFull 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePage_sysRestartTips 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabelCounter_sysRestartTips = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabelRef_sysRestartTips 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleIconBinding_reserveIf 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePage_guiBlockTips		 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabelRef_guiBlockTips 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePreload_guiBlockTips 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 
-	styleBroundPicOrg_prevStyle 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	styleBroundPicOrg_prevStyle 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 }
 
 static void lvGuiHome_styleApplicationInit(void){

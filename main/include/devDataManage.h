@@ -26,10 +26,17 @@ extern "C" {
 /*********************
  *      DEFINES
  *********************/
+#define USR_ERROR_CHECK(con, err, format, ...) do { \
+        if (con) { \
+            if(*format != '\0') \
+                MDF_LOGW("<%s> " format, mdf_err_to_name(err), ##__VA_ARGS__); \
+        } \
+    } while(0)
+
 //#define L8_DEVICE_VERSION						0x08
 #define L8_DEVICE_VERSION						0x18 //开关设备版本号（设备版本号高四位自增向后迭代，高四位为0，语音控制没有高位区分，要慢一点）
 
-#define L8_DEVICE_VERSION_REF_DISCRIPTION		"L8HK-v1.0.32[202007221015]" //固件说明描述版本号
+#define L8_DEVICE_VERSION_REF_DISCRIPTION		"L8HK-v1.1.2[202012270800]" //固件说明描述版本号
 
 #define SCREENSAVER_RUNNING_ENABLE				0	 //屏保显示使能
 
@@ -156,6 +163,8 @@ extern "C" {
 
  #define DEV_TYPES_PANEL_DEF_MULIT_THERMO		(0x14 + DEVICE_FLASH_PARTITIONS_OFFSET) //面板类型定义：仅恒温器
  #define DEV_TYPES_PANEL_DEF_THERMO_INDP_A		(0x15 + DEVICE_FLASH_PARTITIONS_OFFSET) //面板类型定义：恒温器-特殊类型A
+
+ #define DEV_TYPES_PANEL_DEF_RELAY_BOX			(0x77 + DEVICE_FLASH_PARTITIONS_OFFSET) //面板类型定义：继电器模块
 #else
 
  #define DEV_TYPES_PANEL_DEF_ALL_RESERVE 	    0xFB  //面板类型定义：所有可选
@@ -170,9 +179,11 @@ extern "C" {
 
  #define DEV_TYPES_PANEL_DEF_MULIT_THERMO		(0x1B + DEVICE_FLASH_PARTITIONS_OFFSET) //面板类型定义：仅恒温器
  #define DEV_TYPES_PANEL_DEF_THERMO_INDP_A		(0x1C + DEVICE_FLASH_PARTITIONS_OFFSET) //面板类型定义：恒温器-特殊类型A
+
+ #define DEV_TYPES_PANEL_DEF_RELAY_BOX			(0x78 + DEVICE_FLASH_PARTITIONS_OFFSET) //面板类型定义：继电器模块
 #endif
 
-#define L8_DEVICE_TYPE_PANEL_DEF				DEV_TYPES_PANEL_DEF_INDEP_HEATER //设备类型强制定义，记得调光类型一定改DEVICE_DRIVER_METHOD_BY_SLAVE_MCU，否则没用
+#define L8_DEVICE_TYPE_PANEL_DEF				DEV_TYPES_PANEL_DEF_SHARE_MIX //设备类型强制定义，记得调光类型一定改DEVICE_DRIVER_METHOD_BY_SLAVE_MCU，否则没用
 
 #if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_ALL_RESERVE)
 
@@ -239,6 +250,10 @@ extern "C" {
 	 #define LVAPP_DISP_ELECPARAM_HIDDEN_EN 	1
 	#endif
 
+#else(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
+
+	#define	L8_DEVICE_TYPE_DEFULT				devTypeDef_relayBox_1bit
+
 #endif
 
 #if(SCREENSAVER_RUNNING_ENABLE == 1)
@@ -247,7 +262,10 @@ extern "C" {
 	#define EPIDEMIC_DATA_REQ_PERIOD_TIME		1800		//疫情数据获取周期， 单位：s
 #endif
 
-#define STR_VERSION_REALES_REFERENCE_LAST		" 1.Homekit exclusive version.\n\n"
+#define STR_VERSION_REALES_REFERENCE_LAST		" 1.Solve the problem of display confusion.\n\n"\
+												" 2.Solve the problem that it is\n"\
+												"   difficult to add switches to\n"\
+												"   'SmartLiving' in some cases.\n\n"\
 
 #define STR_VERSION_REALES_REFERENCE_DFT		" 1.Homekit exclusive version.\n\n"\
 												" 2.The L8switch border light can\n"\
@@ -285,6 +303,7 @@ extern "C" {
 #elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)
 #elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)
 #elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+#elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
 
 #endif
 
@@ -403,7 +422,7 @@ extern "C" {
 typedef enum{
 
 	devTypeDef_null = 0,
-	devTypeDef_mulitSwOneBit = (L8_DEVICE_TYPEDEFINE_BASE_ADDR + 1),
+	devTypeDef_mulitSwOneBit = (L8_DEVICE_TYPEDEFINE_BASE_ADDR + 0x01),
 	devTypeDef_mulitSwTwoBit,
 	devTypeDef_mulitSwThreeBit,
 	devTypeDef_dimmer,
@@ -416,10 +435,20 @@ typedef enum{
 	devTypeDef_moudleSwTwoBit,
 	devTypeDef_moudleSwThreeBit,
 	devTypeDef_moudleSwCurtain,
-	devTypeDef_thermostat = (L8_DEVICE_TYPEDEFINE_BASE_ADDR + 0x1E),
+	devTypeDef_relayBox_1bit = (L8_DEVICE_TYPEDEFINE_BASE_ADDR + 0x18), //97
+	devTypeDef_relayBox_2bit,
+	devTypeDef_relayBox_curtain,
+	devTypeDef_thermostat = (L8_DEVICE_TYPEDEFINE_BASE_ADDR + 0x1E), //103
 	devTypeDef_heater = (L8_DEVICE_TYPEDEFINE_BASE_ADDR + 0x1F),
 	devTypeDef_thermostatExtension,
-//	devTypeDef_curtainExtension,
+	devTypeDef_voltageSensor,
+	devTypeDef_largeCurOneBit,
+	devTypeDef_rgbLampBelt,
+	devTypeDef_rgbLampBulb,
+	devTypeDef_gasDetect,
+	devTypeDef_smokeDetect,
+	devTypeDef_pirDetect,
+	devTypeDef_uartMoudle, //串口模块，室内机通信专用
 }devTypeDef_enum;
 
 typedef enum{

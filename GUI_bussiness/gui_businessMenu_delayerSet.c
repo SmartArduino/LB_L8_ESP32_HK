@@ -686,28 +686,28 @@ static void lvGuiMenuDelayer_styleMemoryInitialization(void){
 	if(true == memAlloced_flg)return;
 	else memAlloced_flg = true;
 
-	styleTabview_gmdyTimeSet_bg 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleTabview_gmdyTimeSet_indic 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleTabview_gmdyTimeSet_btn_bg 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleTabview_gmdyTimeSet_btn_pr 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleTabview_gmdyTimeSet_btn_rel 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleTabview_gmdyTimeSet_btn_tgl_pr = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleTabview_gmdyTimeSet_btn_tgl_rel = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	styleTabview_gmdyTimeSet_bg 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleTabview_gmdyTimeSet_indic 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleTabview_gmdyTimeSet_btn_bg 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleTabview_gmdyTimeSet_btn_pr 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleTabview_gmdyTimeSet_btn_rel 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleTabview_gmdyTimeSet_btn_tgl_pr = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleTabview_gmdyTimeSet_btn_tgl_rel = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 	
-	styleRoller_gmdyTimeSet_bg 		 = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleRoller_gmdyTimeSet_sel 	 = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabel_gmdyTimeSet_rollerIns = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabel_gmdyTimeSet_title 	 = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabel_gmdyTimeSet_funSave 	 = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_gmdyTimeSet_funSave 	 = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuLevel_A 			 = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleImg_menuFun_btnFun 		 = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	styleRoller_gmdyTimeSet_bg 		 = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleRoller_gmdyTimeSet_sel 	 = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabel_gmdyTimeSet_rollerIns = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabel_gmdyTimeSet_title 	 = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabel_gmdyTimeSet_funSave 	 = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_gmdyTimeSet_funSave 	 = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuLevel_A 			 = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleImg_menuFun_btnFun 		 = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 	
-	styleMbox_bg 	  = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleMbox_btn_pr  = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleMbox_btn_rel = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	styleMbox_bg 	  = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleMbox_btn_pr  = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleMbox_btn_rel = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 	
-	stylePageCb_gModeRelaySel = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	stylePageCb_gModeRelaySel = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 }
 
 void lvGui_businessMenu_delayerSet(lv_obj_t * obj_Parent){

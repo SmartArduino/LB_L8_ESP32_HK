@@ -370,7 +370,7 @@ static lv_res_t btnmFunCb_clickAction_switchReaction_valSet(lv_obj_t *btnm, cons
 
 void lvGui_businessReuse_objStyle_Init(void){
 
-	styleLabelRef_pageDetailSet = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	if(NULL == styleLabelRef_pageDetailSet)styleLabelRef_pageDetailSet = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 
 	lv_style_copy(styleLabelRef_pageDetailSet, &lv_style_plain);
 	styleLabelRef_pageDetailSet->text.font = &lv_font_consola_17;

@@ -17,7 +17,7 @@
 #include "dataTrans_meshUpgrade.h"
 #include "appLaunch_HT.h"
 
-#include "gui_businessMenu_settingSet.h"
+#include "gui_businessMenu_settingSet.h"os_zalloc
 
 #include "gui_businessHome.h"
 #include "gui_businessReuse_reactionObjPage.h"
@@ -86,6 +86,10 @@ static const char *deviceType_listTab = {
 #elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
 
 	"moudle 3 bit"
+
+#elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
+
+	"relay 3 bit"
 
 #elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_MULIT_THERMO)
 
@@ -1974,39 +1978,39 @@ static void lvGuiMenuSettingSet_styleMemoryInitialization(void){
 	if(true == memAlloced_flg)return;
 	else memAlloced_flg = true;
 
-	stylePage_funSetOption 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuLevel_A 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuLevel_B 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuLevel_C 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBk_objBground 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleDdlistSettingA_devType = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabel_devTypeSelected	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	bg_styleDevStatusRecordIF 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	indic_styleDevStatusRecordIF = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	knob_on_styleDevStatusRecordIF = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	knob_off_styleDevStatusRecordIF = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleMbox_bg 				= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleMbox_btn_pr 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleMbox_btn_rel 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_specialTransparent = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleImg_menuFun_btnFun 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePageCb_elecParamDispSet = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePageCb_screenLandscape = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleRoller_epidemicCyLocation_bg = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleRoller_epidemicCyLocation_sel = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePage_devTypeSet 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleTextPageTitle_devTypeSet = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePageCb_devTypeSet		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabelPageBtn_devTypeSet = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuTzSet			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePageCb_tzSetMinusIf	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_devAtmosLightColorSet = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePage_devAtmosLightColorSet = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleTextPageTitle_devAtmosLightColorSet = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabelPageBtn_devAtmosLightColorSet = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabelPageCb_devALSC_breathIf = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabelPageCb_devALSC_setAllSw = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabelPageCb_devALSC_autoSet = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	stylePage_funSetOption 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuLevel_A 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuLevel_B 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuLevel_C 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBk_objBground 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleDdlistSettingA_devType = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabel_devTypeSelected	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	bg_styleDevStatusRecordIF 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	indic_styleDevStatusRecordIF = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	knob_on_styleDevStatusRecordIF = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	knob_off_styleDevStatusRecordIF = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleMbox_bg 				= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleMbox_btn_pr 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleMbox_btn_rel 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_specialTransparent = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleImg_menuFun_btnFun 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePageCb_elecParamDispSet = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePageCb_screenLandscape = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleRoller_epidemicCyLocation_bg = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleRoller_epidemicCyLocation_sel = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePage_devTypeSet 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleTextPageTitle_devTypeSet = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePageCb_devTypeSet		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabelPageBtn_devTypeSet = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuTzSet			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePageCb_tzSetMinusIf	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_devAtmosLightColorSet = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePage_devAtmosLightColorSet = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleTextPageTitle_devAtmosLightColorSet = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabelPageBtn_devAtmosLightColorSet = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabelPageCb_devALSC_breathIf = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabelPageCb_devALSC_setAllSw = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabelPageCb_devALSC_autoSet = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 }
 
 static void lvGuiSettingSet_objStyle_Init(void){
@@ -2391,7 +2395,7 @@ void lvGui_businessMenu_settingSet(lv_obj_t * obj_Parent){
 //	lv_page_scroll_ver(page_funSetOption, 480);
 
 	textSettingA_deviceType = lv_label_create(page_funSetOption, NULL);
-	lv_label_set_text(textSettingA_deviceType, "device type:");
+	lv_label_set_text(textSettingA_deviceType, "Device Type:");
 	lv_obj_set_style(textSettingA_deviceType, styleText_menuLevel_B);
 	lv_obj_set_protect(textSettingA_deviceType, LV_PROTECT_POS);
 	lv_obj_align(textSettingA_deviceType, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20);
@@ -2440,7 +2444,7 @@ void lvGui_businessMenu_settingSet(lv_obj_t * obj_Parent){
 //	}
 
 	textSettingA_devStatusRecordIF = lv_label_create(page_funSetOption, NULL);
-	lv_label_set_text(textSettingA_devStatusRecordIF, "stay the status:");
+	lv_label_set_text(textSettingA_devStatusRecordIF, "Stay The Status:");
 	lv_obj_set_style(textSettingA_devStatusRecordIF, styleText_menuLevel_B);
 	lv_obj_set_protect(textSettingA_devStatusRecordIF, LV_PROTECT_POS);
 	lv_obj_align(textSettingA_devStatusRecordIF, textSettingA_deviceType, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 60);
@@ -2458,7 +2462,7 @@ void lvGui_businessMenu_settingSet(lv_obj_t * obj_Parent){
 	lvObjAlign_temp = textSettingA_devStatusRecordIF;
 
 	textSettingA_bGroundPicSelect = lv_label_create(page_funSetOption, NULL);
-	lv_label_set_text(textSettingA_bGroundPicSelect, "background pic set:");
+	lv_label_set_text(textSettingA_bGroundPicSelect, "Background Set:");
 	lv_obj_set_style(textSettingA_bGroundPicSelect, styleText_menuLevel_B);
 	lv_obj_set_protect(textSettingA_bGroundPicSelect, LV_PROTECT_POS);
 	lv_obj_align(textSettingA_bGroundPicSelect, lvObjAlign_temp, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 60);
@@ -2498,7 +2502,7 @@ void lvGui_businessMenu_settingSet(lv_obj_t * obj_Parent){
 	lvObjAlign_temp = textSettingA_bGroundPicSelect;
 
 	textSettingA_devAtmosLightColorSet = lv_label_create(page_funSetOption, NULL);
-	lv_label_set_text(textSettingA_devAtmosLightColorSet, "illumination set:");
+	lv_label_set_text(textSettingA_devAtmosLightColorSet, "Illumination Set:");
 	lv_obj_set_style(textSettingA_devAtmosLightColorSet, styleText_menuLevel_B);
 	lv_obj_set_protect(textSettingA_devAtmosLightColorSet, LV_PROTECT_POS);
 	lv_obj_align(textSettingA_devAtmosLightColorSet, lvObjAlign_temp, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 60);
@@ -2514,7 +2518,7 @@ void lvGui_businessMenu_settingSet(lv_obj_t * obj_Parent){
 	lvObjAlign_temp = textSettingA_devAtmosLightColorSet;
 
 	textSettingA_devTimezoneSet = lv_label_create(page_funSetOption, NULL);
-	lv_label_set_text(textSettingA_devTimezoneSet, "time zone set:");
+	lv_label_set_text(textSettingA_devTimezoneSet, "Time zone Set:");
 	lv_obj_set_style(textSettingA_devTimezoneSet, styleText_menuLevel_B);
 	lv_obj_set_protect(textSettingA_devTimezoneSet, LV_PROTECT_POS);
 	lv_obj_align(textSettingA_devTimezoneSet, lvObjAlign_temp, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 60);
@@ -2617,7 +2621,7 @@ void lvGui_businessMenu_settingSet(lv_obj_t * obj_Parent){
 		case devTypeDef_thermostatExtension:{
 
 			textSettingA_homepageThemestyle = lv_label_create(page_funSetOption, NULL);
-			lv_label_set_text(textSettingA_homepageThemestyle, "theme:");
+			lv_label_set_text(textSettingA_homepageThemestyle, "Theme:");
 			lv_obj_set_style(textSettingA_homepageThemestyle, styleText_menuLevel_B);
 			lv_obj_set_protect(textSettingA_homepageThemestyle, LV_PROTECT_POS);
 			lv_obj_align(textSettingA_homepageThemestyle, lvObjAlign_temp, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 60);
@@ -2640,7 +2644,7 @@ void lvGui_businessMenu_settingSet(lv_obj_t * obj_Parent){
 	}
 
 	textSettingA_factoryRecoveryIf = lv_label_create(page_funSetOption, NULL);
-	lv_label_set_text(textSettingA_factoryRecoveryIf, "factory reset:");
+	lv_label_set_text(textSettingA_factoryRecoveryIf, "Factory Reset:");
 	lv_obj_set_style(textSettingA_factoryRecoveryIf, styleText_menuLevel_B);
 	lv_obj_set_protect(textSettingA_factoryRecoveryIf, LV_PROTECT_POS);
 	switch(currentDev_typeGet()){
@@ -2699,7 +2703,7 @@ void lvGui_businessMenu_settingSet(lv_obj_t * obj_Parent){
 //	lv_obj_align(textBtnRef_touchRecalibrationIf, NULL, LV_ALIGN_CENTER, 0, 0);
 
 	textSettingA_screenBrightness = lv_label_create(page_funSetOption, NULL);
-	lv_label_set_text(textSettingA_screenBrightness, "screen brightness:");
+	lv_label_set_text(textSettingA_screenBrightness, "Screen Brightness:");
 	lv_obj_set_style(textSettingA_screenBrightness, styleText_menuLevel_B);
 	lv_obj_set_protect(textSettingA_screenBrightness, LV_PROTECT_POS);
 	lv_obj_align(textSettingA_screenBrightness, lvObjAlign_temp, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 60);
@@ -2721,7 +2725,7 @@ void lvGui_businessMenu_settingSet(lv_obj_t * obj_Parent){
 	lvObjAlign_temp = textSettingA_screenBrightness;
 
 	textSettingA_tempCalibration = lv_label_create(page_funSetOption, NULL);
-	lv_label_set_text(textSettingA_tempCalibration, "temperature calibration:");
+	lv_label_set_text(textSettingA_tempCalibration, "Temperature Calibration:");
 	lv_obj_set_style(textSettingA_tempCalibration, styleText_menuLevel_B);
 	lv_obj_set_protect(textSettingA_tempCalibration, LV_PROTECT_POS);
 	lv_obj_align(textSettingA_tempCalibration, lvObjAlign_temp, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 60);
@@ -2771,7 +2775,7 @@ void lvGui_businessMenu_settingSet(lv_obj_t * obj_Parent){
 	lv_obj_align(textBtnValCut_tempratureCal, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, -6);
 
 	textSettingA_screenLightTime = lv_label_create(page_funSetOption, NULL);
-	lv_label_set_text(textSettingA_screenLightTime, "screen light time:");
+	lv_label_set_text(textSettingA_screenLightTime, "Screen Light Time:");
 	lv_obj_set_style(textSettingA_screenLightTime, styleText_menuLevel_B);
 	lv_obj_set_protect(textSettingA_screenLightTime, LV_PROTECT_POS);
 	lv_obj_align(textSettingA_screenLightTime, textSettingA_tempCalibration, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 60);
@@ -2821,11 +2825,9 @@ void lvGui_businessMenu_settingSet(lv_obj_t * obj_Parent){
 	lv_obj_set_protect(textBtnTimeCut_screenLightTime, LV_PROTECT_POS);
 	lv_obj_align(textBtnTimeCut_screenLightTime, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, 2);
 
-#if(L8_DEVICE_TYPE_PANEL_DEF != DEV_TYPES_PANEL_DEF_INDEP_HEATER) &&\
-   (L8_DEVICE_TYPE_PANEL_DEF != DEV_TYPES_PANEL_DEF_MULIT_THERMO) &&\
-   (L8_DEVICE_TYPE_PANEL_DEF != DEV_TYPES_PANEL_DEF_THERMO_INDP_A)//热水器及恒温器电量功能暂隐
+#if(0 == LVAPP_DISP_ELECPARAM_HIDDEN_EN)//热水器及恒温器电量功能暂隐
 	textSettingA_elecParamDispSelect = lv_label_create(page_funSetOption, NULL);
-	lv_label_set_text(textSettingA_elecParamDispSelect, "electric parameter display:");
+	lv_label_set_text(textSettingA_elecParamDispSelect, "Electric Parameter Display:");
 	lv_obj_set_style(textSettingA_elecParamDispSelect, styleText_menuLevel_B);
 	lv_obj_set_protect(textSettingA_elecParamDispSelect, LV_PROTECT_POS);
 	lv_obj_align(textSettingA_elecParamDispSelect, textSettingA_screenLightTime, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 60);
@@ -2853,7 +2855,7 @@ void lvGui_businessMenu_settingSet(lv_obj_t * obj_Parent){
 		(lv_cb_set_checked(cbDispSelect_elecParam_elecsum, false));
 
 	textSettingA_elecsumResetClear = lv_label_create(page_funSetOption, NULL);
-	lv_label_set_text(textSettingA_elecsumResetClear, "electric sum reset:");
+	lv_label_set_text(textSettingA_elecsumResetClear, "Electric Sum Reset:");
 	lv_obj_set_style(textSettingA_elecsumResetClear, styleText_menuLevel_B);
 	lv_obj_set_protect(textSettingA_elecsumResetClear, LV_PROTECT_POS);
 	lv_obj_align(textSettingA_elecsumResetClear, textSettingA_elecParamDispSelect, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 60);
@@ -2874,7 +2876,7 @@ void lvGui_businessMenu_settingSet(lv_obj_t * obj_Parent){
 	lv_obj_align(textBtnRef_elecsumReset, NULL, LV_ALIGN_CENTER, 0, 0);
 
 	textSettingA_screenLandscape = lv_label_create(page_funSetOption, NULL);
-	lv_label_set_text(textSettingA_screenLandscape, "screen display angle:");
+	lv_label_set_text(textSettingA_screenLandscape, "Screen Display Angle:");
 	lv_obj_set_style(textSettingA_screenLandscape, styleText_menuLevel_B);
 	lv_obj_set_protect(textSettingA_screenLandscape, LV_PROTECT_POS);
 	lv_obj_align(textSettingA_screenLandscape, textSettingA_elecsumResetClear, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 60);
@@ -2936,7 +2938,7 @@ void lvGui_businessMenu_settingSet(lv_obj_t * obj_Parent){
 	if(upgradeAvailable_flg){
 
 		textSettingA_fwareUpgrade = lv_label_create(page_funSetOption, NULL);
-		lv_label_set_text(textSettingA_fwareUpgrade, "firmware upgrade:");
+		lv_label_set_text(textSettingA_fwareUpgrade, "Firmware Upgrade:");
 		lv_obj_set_style(textSettingA_fwareUpgrade, styleText_menuLevel_B);
 		lv_obj_set_protect(textSettingA_fwareUpgrade, LV_PROTECT_POS);
 		lv_obj_align(textSettingA_fwareUpgrade, textSettingA_screenLandscape, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 60);
@@ -3020,9 +3022,7 @@ void lvGui_businessMenu_settingSet(lv_obj_t * obj_Parent){
 	lv_page_glue_obj(btnTimeCut_screenLightTime, true);
 	lv_page_glue_obj(textBtnTimeCut_screenLightTime, true);
 	lv_page_glue_obj(textSliderRef_tempratureCal, true);
-#if(L8_DEVICE_TYPE_PANEL_DEF != DEV_TYPES_PANEL_DEF_INDEP_HEATER) &&\
-   (L8_DEVICE_TYPE_PANEL_DEF != DEV_TYPES_PANEL_DEF_MULIT_THERMO) &&\
-   (L8_DEVICE_TYPE_PANEL_DEF != DEV_TYPES_PANEL_DEF_THERMO_INDP_A)//热水器及恒温器电量功能暂隐
+#if(0 == LVAPP_DISP_ELECPARAM_HIDDEN_EN)//热水器及恒温器电量功能暂隐
 	lv_page_glue_obj(textSettingA_elecParamDispSelect, true);
 	lv_page_glue_obj(textSettingA_elecsumResetClear, true);
 #endif
@@ -3089,9 +3089,7 @@ void lvGui_businessMenu_settingSet(lv_obj_t * obj_Parent){
 	lv_obj_animate(btnValCut_tempratureCal, LV_ANIM_FLOAT_LEFT, obj_animate_time, obj_animate_delayBasic += obj_animate_delay, NULL);
 	lv_obj_animate(sliderSettingA_tempratureCal, LV_ANIM_FLOAT_LEFT, obj_animate_time, obj_animate_delayBasic += obj_animate_delay, NULL);	
 
-#if(L8_DEVICE_TYPE_PANEL_DEF != DEV_TYPES_PANEL_DEF_INDEP_HEATER) &&\
-   (L8_DEVICE_TYPE_PANEL_DEF != DEV_TYPES_PANEL_DEF_MULIT_THERMO) &&\
-   (L8_DEVICE_TYPE_PANEL_DEF != DEV_TYPES_PANEL_DEF_THERMO_INDP_A)//热水器及恒温器电量功能暂隐
+#if(0 == LVAPP_DISP_ELECPARAM_HIDDEN_EN)//热水器及恒温器电量功能暂隐
 	lv_obj_animate(textSettingA_elecParamDispSelect, LV_ANIM_FLOAT_LEFT, obj_animate_time, obj_animate_delayBasic += obj_animate_delay,  NULL);
 	lv_obj_animate(cbDispSelect_elecParam_power, LV_ANIM_FLOAT_LEFT, obj_animate_time, obj_animate_delayBasic += obj_animate_delay, NULL);
 	lv_obj_animate(cbDispSelect_elecParam_elecsum, LV_ANIM_FLOAT_LEFT, obj_animate_time, obj_animate_delayBasic += obj_animate_delay,  NULL);

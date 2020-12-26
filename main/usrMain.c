@@ -309,15 +309,20 @@ static void show_system_info_timercb(void *timer)
 	devMutualCtrlGroupInfo_groupInsertGet(mutualGroupInsert_temp);
 //	lv_mem_monitor(&lv_mon);
 
-    ESP_LOGI(TAG, 
-    		 "System information, channel: %d, layer: %d, self mac: " MACSTR ", parent bssid: " MACSTR
-             ", parent rssi: %d, mwifi connected(?):%d, node num: %d, nodeApp num: %d, free heap: %u, mutualGroupInsert:[%d]-[%d]-[%d].\n", 
-             primary,
-             esp_mesh_get_layer(), MAC2STR(sta_mac), MAC2STR(parent_bssid.addr),
-             mesh_assoc.rssi, mwifi_is_connected(), esp_mesh_get_total_node_num(), 
-             L8devHbDataManageList_nodeNumDetect(listHead_nodeDevDataManage), 
-             esp_get_free_heap_size(),
-             mutualGroupInsert_temp[0], mutualGroupInsert_temp[1], mutualGroupInsert_temp[2]);
+    // ESP_LOGI(TAG, 
+    // 		 "System information, channel: %d, layer: %d, self mac: " MACSTR ", parent bssid: " MACSTR
+    //          ", parent rssi: %d, mwifi connected(?):%d, node num: %d, nodeApp num: %d, free heap: %u, mutualGroupInsert:[%d]-[%d]-[%d].\n", 
+    //          primary,
+    //          esp_mesh_get_layer(), MAC2STR(sta_mac), MAC2STR(parent_bssid.addr),
+    //          mesh_assoc.rssi, mwifi_is_connected(), esp_mesh_get_total_node_num(), 
+    //          L8devHbDataManageList_nodeNumDetect(listHead_nodeDevDataManage), 
+    //          esp_get_free_heap_size(),
+    //          mutualGroupInsert_temp[0], mutualGroupInsert_temp[1], mutualGroupInsert_temp[2]);
+
+	ESP_LOGI(TAG, 
+			 "Free heap, internal current: %d, minimum: %d.",
+			 heap_caps_get_free_size(MALLOC_CAP_8BIT | MALLOC_CAP_INTERNAL),
+			 heap_caps_get_minimum_free_size(MALLOC_CAP_8BIT | MALLOC_CAP_INTERNAL));
 
 //	MDF_LOGI("lv mem used:%6d(%3d%%), lv mem biggest free:%6d.\n",
 //			 (int)lv_mon.total_size - (int)lv_mon.free_size,
@@ -885,7 +890,8 @@ static mdf_err_t event_loop_cb(mdf_event_loop_t event, void *ctx){
 
 #if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)|\
    (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)|\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)|\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
 
 			devBeepTips_trig(4, 8, 100, 40, 2); //beeps提示
 #else
@@ -1279,7 +1285,7 @@ static void usrApplication_logConfigInit(void){
 // 	esp_log_level_set("*", ESP_LOG_INFO);
 	esp_log_level_set("*", ESP_LOG_WARN);
 //	esp_log_level_set("lanbon_L8 - timerSoft", ESP_LOG_DEBUG);
-//	esp_log_level_set(TAG, ESP_LOG_DEBUG);
+//	esp_log_level_set(TAG, ESP_LOG_INFO);
 
 	esp_log_level_set("gpio", 			ESP_LOG_INFO);
 	esp_log_level_set("mupgrade_root", 	ESP_LOG_INFO);
@@ -1301,7 +1307,8 @@ void app_main()
 
 //	ESP_LOGW("USR test", "lv_style_t size:%d", sizeof(lv_style_t));
 
-#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE) //为了读取拨码数据，提前初始化驱动
+#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX) //为了读取拨码数据，提前初始化驱动
 	devMechanicalOpreatPeriphInit();
 #endif
 
@@ -1316,9 +1323,10 @@ void app_main()
     /**
      * @brief Initialize LittlevGL GUI or led tips
      */
-#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED) ||\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET) ||\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
 
 	devOpreation_bussinessInit();
 	vTaskDelay(100 / portTICK_PERIOD_MS);

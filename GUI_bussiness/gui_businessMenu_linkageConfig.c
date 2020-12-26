@@ -392,7 +392,9 @@ static lv_res_t funCb_imgbtnActionClick_CtrlObjBaseOpreat(lv_obj_t *imgbtn){
 			case devTypeDef_mulitSwTwoBit:
 			case devTypeDef_mulitSwThreeBit:
 			case devTypeDef_moudleSwOneBit:
+			case devTypeDef_relayBox_1bit:
 			case devTypeDef_moudleSwTwoBit:
+			case devTypeDef_relayBox_2bit:
 			case devTypeDef_moudleSwThreeBit:{
 
 				if(LV_BTN_STATE_TGL_REL == btnState){
@@ -590,6 +592,7 @@ static lv_res_t funCb_sliderActionSlide_CtrlObjBaseOpreat(lv_obj_t *slider){
 			
 			case devTypeDef_curtain:
 			case devTypeDef_moudleSwCurtain:
+			case devTypeDef_relayBox_curtain:
 
 				devState_temp.devType_curtain.devCurtain_actMethod = 1;
 				devState_temp.devType_curtain.devCurtain_actEnumVal = sliderVal;
@@ -621,7 +624,8 @@ static lv_obj_t *lvGui_pageFunctionDetailSet_creat(const char * pageTitleName, u
 		(lv_obj_set_size(pageLinkage_detailSetting, 280, 200)):
 		(lv_obj_set_size(pageLinkage_detailSetting, 200, 240));
 	(devStatusDispMethod_landscapeIf_get())?
-		(lv_obj_set_pos(pageLinkage_detailSetting, 20, 20)):
+		(lv_obj_set_pos(pageLinkage_detailSetting, 20, 20)):
+
 		(lv_obj_set_pos(pageLinkage_detailSetting, 20, 60));		
 	lv_page_set_style(pageLinkage_detailSetting, LV_PAGE_STYLE_SB, stylePage_linkageDetailSetting);
 	lv_page_set_style(pageLinkage_detailSetting, LV_PAGE_STYLE_BG, stylePage_linkageDetailSetting);
@@ -646,13 +650,15 @@ static lv_obj_t *lvGui_pageFunctionDetailSet_creat(const char * pageTitleName, u
 	lv_page_glue_obj(btnConfirm_pageLinkageDetailSetting, true);
 	lv_obj_set_protect(btnConfirm_pageLinkageDetailSetting, LV_PROTECT_FOLLOW);
 	lv_obj_set_protect(btnConfirm_pageLinkageDetailSetting, LV_PROTECT_POS);
-	(devStatusDispMethod_landscapeIf_get())?
+	(devStatusDispMethod_landscapeIf_get())?
+
 		(lv_obj_align(btnConfirm_pageLinkageDetailSetting, pageLinkage_detailSetting, LV_ALIGN_IN_BOTTOM_LEFT, 45, -1)):
 		(lv_obj_align(btnConfirm_pageLinkageDetailSetting, pageLinkage_detailSetting, LV_ALIGN_IN_BOTTOM_LEFT, 25, -1));
 	lv_btn_set_action(btnConfirm_pageLinkageDetailSetting, LV_BTN_ACTION_CLICK, funCb_btnActionClickDetailSet_pageChoiceSelect_confirm);
 	lv_obj_set_free_num(btnConfirm_pageLinkageDetailSetting, pageObjIst);
 	btnCancel_pageLinkageDetailSetting = lv_btn_create(pageLinkage_detailSetting, btnConfirm_pageLinkageDetailSetting);
-	(devStatusDispMethod_landscapeIf_get())?
+	(devStatusDispMethod_landscapeIf_get())?
+
 		(lv_obj_align(btnCancel_pageLinkageDetailSetting, pageLinkage_detailSetting, LV_ALIGN_IN_BOTTOM_RIGHT, -45, -1)):
 		(lv_obj_align(btnCancel_pageLinkageDetailSetting, btnConfirm_pageLinkageDetailSetting, LV_ALIGN_CENTER, 85, 0));
 	lv_btn_set_action(btnCancel_pageLinkageDetailSetting, LV_BTN_ACTION_CLICK, funCb_btnActionClickDetailSet_pageChoiceSelect_cancel);
@@ -1022,18 +1028,18 @@ void lvGuiLinkageConfig_devGraphCtrlBlock_listLoadInitialization(stt_nodeObj_lis
 
 	esp_wifi_get_mac(ESP_IF_WIFI_STA, devSelfMac);
 
-	if(styleStdGblockCtrlObj_baseBlock_SELF == NULL)styleStdGblockCtrlObj_baseBlock_SELF = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	if(styleStdGblockCtrlObj_baseBlock_A == NULL)styleStdGblockCtrlObj_baseBlock_A = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	if(styleStdGblockCtrlObj_baseBlock_B == NULL)styleStdGblockCtrlObj_baseBlock_B = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	if(styleStdGblockCtrlObj_baseBlock_C == NULL)styleStdGblockCtrlObj_baseBlock_C = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	if(styleStdGblockCtrlObj_baseBlock_D == NULL)styleStdGblockCtrlObj_baseBlock_D = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	if(styleStdGblockCtrlObj_baseBlock_SELF == NULL)styleStdGblockCtrlObj_baseBlock_SELF = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	if(styleStdGblockCtrlObj_baseBlock_A == NULL)styleStdGblockCtrlObj_baseBlock_A = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	if(styleStdGblockCtrlObj_baseBlock_B == NULL)styleStdGblockCtrlObj_baseBlock_B = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	if(styleStdGblockCtrlObj_baseBlock_C == NULL)styleStdGblockCtrlObj_baseBlock_C = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	if(styleStdGblockCtrlObj_baseBlock_D == NULL)styleStdGblockCtrlObj_baseBlock_D = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 
-	if(styleStdGblockCtrlObj_imgbtn_pr == NULL)styleStdGblockCtrlObj_imgbtn_pr = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	if(styleStdGblockCtrlObj_imgbtn_rel == NULL)styleStdGblockCtrlObj_imgbtn_rel = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	if(styleStdGblockCtrlObj_icon_pr == NULL)styleStdGblockCtrlObj_icon_pr = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	if(styleStdGblockCtrlObj_icon_rel == NULL)styleStdGblockCtrlObj_icon_rel = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	if(styleStdGblockCtrlObj_labSelf == NULL)styleStdGblockCtrlObj_labSelf = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	if(styleStdGblockCtrlObj_labOther == NULL)styleStdGblockCtrlObj_labOther = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	if(styleStdGblockCtrlObj_imgbtn_pr == NULL)styleStdGblockCtrlObj_imgbtn_pr = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	if(styleStdGblockCtrlObj_imgbtn_rel == NULL)styleStdGblockCtrlObj_imgbtn_rel = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	if(styleStdGblockCtrlObj_icon_pr == NULL)styleStdGblockCtrlObj_icon_pr = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	if(styleStdGblockCtrlObj_icon_rel == NULL)styleStdGblockCtrlObj_icon_rel = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	if(styleStdGblockCtrlObj_labSelf == NULL)styleStdGblockCtrlObj_labSelf = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	if(styleStdGblockCtrlObj_labOther == NULL)styleStdGblockCtrlObj_labOther = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 
 	lv_style_copy(styleStdGblockCtrlObj_baseBlock_A, &lv_style_plain);
 	styleStdGblockCtrlObj_baseBlock_A->body.border.part = LV_BORDER_NONE;
@@ -1083,7 +1089,9 @@ void lvGuiLinkageConfig_devGraphCtrlBlock_listLoadInitialization(stt_nodeObj_lis
 			case devTypeDef_mulitSwTwoBit:
 			case devTypeDef_mulitSwThreeBit:
 			case devTypeDef_moudleSwOneBit:
+			case devTypeDef_relayBox_1bit:
 			case devTypeDef_moudleSwTwoBit:
+			case devTypeDef_relayBox_2bit:
 			case devTypeDef_moudleSwThreeBit:
 					lv_obj_set_style(pTemp->next->nodeData.graphBaseBlock, styleStdGblockCtrlObj_baseBlock_A);
 					break;
@@ -1091,6 +1099,7 @@ void lvGuiLinkageConfig_devGraphCtrlBlock_listLoadInitialization(stt_nodeObj_lis
 			case devTypeDef_dimmer:
 			case devTypeDef_curtain:
 			case devTypeDef_moudleSwCurtain:
+			case devTypeDef_relayBox_curtain:
 					lv_obj_set_style(pTemp->next->nodeData.graphBaseBlock, styleStdGblockCtrlObj_baseBlock_B);
 					break;
 
@@ -1121,7 +1130,9 @@ void lvGuiLinkageConfig_devGraphCtrlBlock_listLoadInitialization(stt_nodeObj_lis
 			case devTypeDef_mulitSwTwoBit:
 			case devTypeDef_mulitSwThreeBit:
 			case devTypeDef_moudleSwOneBit:
+			case devTypeDef_relayBox_1bit:
 			case devTypeDef_moudleSwTwoBit:
+			case devTypeDef_relayBox_2bit:
 			case devTypeDef_moudleSwThreeBit:{
 
 				uint8_t loopCreat = 0,
@@ -1130,7 +1141,8 @@ void lvGuiLinkageConfig_devGraphCtrlBlock_listLoadInitialization(stt_nodeObj_lis
 				switch(pTemp->next->nodeData.ctrlObj_devType){
 
 					case devTypeDef_mulitSwTwoBit:
-					case devTypeDef_moudleSwTwoBit:loopCreat = 2;break;
+					case devTypeDef_moudleSwTwoBit:
+					case devTypeDef_relayBox_2bit:loopCreat = 2;break;
 					case devTypeDef_mulitSwThreeBit:
 					case devTypeDef_moudleSwThreeBit:loopCreat = 3;break;
 
@@ -1195,7 +1207,8 @@ void lvGuiLinkageConfig_devGraphCtrlBlock_listLoadInitialization(stt_nodeObj_lis
 				switch(pTemp->next->nodeData.ctrlObj_devType){
 
 					case devTypeDef_mulitSwTwoBit:
-					case devTypeDef_moudleSwTwoBit:{
+					case devTypeDef_moudleSwTwoBit:
+					case devTypeDef_relayBox_2bit:{
 
 						lv_obj_align(pTemp->next->nodeData.imgCtrlObj[0], pTemp->next->nodeData.graphBaseBlock, LV_ALIGN_CENTER, -50, coordErrObj_y);
 						lv_obj_align(pTemp->next->nodeData.imgCtrlObj[1], pTemp->next->nodeData.graphBaseBlock, LV_ALIGN_CENTER, 50, coordErrObj_y);
@@ -1228,6 +1241,7 @@ void lvGuiLinkageConfig_devGraphCtrlBlock_listLoadInitialization(stt_nodeObj_lis
 
 			case devTypeDef_curtain:
 			case devTypeDef_moudleSwCurtain:
+			case devTypeDef_relayBox_curtain:
 			case devTypeDef_dimmer:{
 
 				stt_devDataPonitTypedef devStateTemp = {0};
@@ -1261,6 +1275,7 @@ void lvGuiLinkageConfig_devGraphCtrlBlock_listLoadInitialization(stt_nodeObj_lis
 
 					case devTypeDef_curtain:
 					case devTypeDef_moudleSwCurtain:
+					case devTypeDef_relayBox_curtain:
 						lv_slider_set_value(pTemp->next->nodeData.imgCtrlObj[0], devStateTemp.devType_curtain.devCurtain_actEnumVal);
 						lv_label_set_text(pTemp->next->nodeData.ctrlObjIcon[0], "#FFFF80 Cur#");
 						break;
@@ -1488,11 +1503,13 @@ void lvGuiLinkageConfig_devGraphCtrlBlock_listLoadInitialization(stt_nodeObj_lis
 
 			case devTypeDef_mulitSwOneBit:
 			case devTypeDef_moudleSwOneBit:
+			case devTypeDef_relayBox_1bit:
 				devStatistical.sum_devSwit += 1;
 				break;
 			
 			case devTypeDef_mulitSwTwoBit:
 			case devTypeDef_moudleSwTwoBit:
+			case devTypeDef_relayBox_2bit:
 				devStatistical.sum_devSwit += 2;
 				break;
 
@@ -1503,6 +1520,7 @@ void lvGuiLinkageConfig_devGraphCtrlBlock_listLoadInitialization(stt_nodeObj_lis
 
 			case devTypeDef_curtain:
 			case devTypeDef_moudleSwCurtain:
+			case devTypeDef_relayBox_curtain:
 				devStatistical.sum_devCur += 1;
 				break;
 
@@ -1613,19 +1631,19 @@ static void lvGuiMenuLinkage_styleMemoryInitialization(void){
 	if(true == memAlloced_flg)return;
 	else memAlloced_flg = true;
 
-	stylePage_funSetOption = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePage_linkageDetailSetting = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuLevel_A = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuLevel_B = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuLevel_C = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleCb_proximityDetection_screenLight = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleCb_proximityDetection_switchTrigEn = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_specialTransparent = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleTextBtn_linkageDetailSetting = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleTextTitle_linkageDetailSetting = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleRoller_bg_tempThresholdAdj = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleRoller_sel_tempThresholdAdj = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleImg_menuFun_btnFun = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	stylePage_funSetOption = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePage_linkageDetailSetting = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuLevel_A = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuLevel_B = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuLevel_C = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleCb_proximityDetection_screenLight = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleCb_proximityDetection_switchTrigEn = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_specialTransparent = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleTextBtn_linkageDetailSetting = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleTextTitle_linkageDetailSetting = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleRoller_bg_tempThresholdAdj = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleRoller_sel_tempThresholdAdj = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleImg_menuFun_btnFun = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 }
 
 static void lvGuiLinkageConfig_objStyle_Init(void){
@@ -1732,7 +1750,9 @@ void lvGuiLinkageConfig_devGraphCtrlBlock_listNodeUnitRefresh(uint8_t devMac[MWI
 			case devTypeDef_mulitSwTwoBit:
 			case devTypeDef_mulitSwThreeBit:
 			case devTypeDef_moudleSwOneBit:
+			case devTypeDef_relayBox_1bit:
 			case devTypeDef_moudleSwTwoBit:
+			case devTypeDef_relayBox_2bit:
 			case devTypeDef_moudleSwThreeBit:{
 
 				uint8_t loopCreat = 0,
@@ -1741,7 +1761,8 @@ void lvGuiLinkageConfig_devGraphCtrlBlock_listNodeUnitRefresh(uint8_t devMac[MWI
 				switch(objNode_data->nodeData.ctrlObj_devType){
 
 					case devTypeDef_mulitSwTwoBit:
-					case devTypeDef_moudleSwTwoBit:loopCreat = 2;break;
+					case devTypeDef_moudleSwTwoBit:
+					case devTypeDef_relayBox_2bit:loopCreat = 2;break;
 					case devTypeDef_mulitSwThreeBit:
 					case devTypeDef_moudleSwThreeBit:loopCreat = 3;break;
 
@@ -1768,7 +1789,8 @@ void lvGuiLinkageConfig_devGraphCtrlBlock_listNodeUnitRefresh(uint8_t devMac[MWI
 			}break;
 
 			case devTypeDef_curtain:
-			case devTypeDef_moudleSwCurtain:{
+			case devTypeDef_moudleSwCurtain:
+			case devTypeDef_relayBox_curtain:{
 
 				memcpy(&devStateTemp, &devState, sizeof(stt_devDataPonitTypedef));
 				lv_slider_set_value(objNode_data->nodeData.imgCtrlObj[0], devStateTemp.devType_curtain.devCurtain_actEnumVal);

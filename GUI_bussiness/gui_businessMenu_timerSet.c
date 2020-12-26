@@ -660,34 +660,34 @@ static void lvGuiMenuTimerSet_styleMemoryInitialization(void){
 	if(true == memAlloced_flg)return;
 	else memAlloced_flg = true;
 
-	styleRoller_timeSet_bg 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleRoller_timeSet_sel 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSw_devStatus_bg 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSw_devStatus_indic 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSw_devStatus_knobOn 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleSw_devStatus_knobOff 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBk_objBground 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_specialTransparent_rel = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_specialTransparent_pr = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_specialTransparent_tgl_rel = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_specialTransparent_tgl_pr = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePage_reaptSet 			= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePageCb_reaptSet 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleTextPageTitle_reaptSet = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePageBtn_reaptSet 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuLevel_A 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuSetChoiceTitle = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuDevStatus 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuTimeSet 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuReaptSet 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuReaptRem 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	styleRoller_timeSet_bg 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleRoller_timeSet_sel 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSw_devStatus_bg 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSw_devStatus_indic 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSw_devStatus_knobOn 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleSw_devStatus_knobOff 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBk_objBground 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_specialTransparent_rel = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_specialTransparent_pr = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_specialTransparent_tgl_rel = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_specialTransparent_tgl_pr = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePage_reaptSet 			= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePageCb_reaptSet 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleTextPageTitle_reaptSet = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePageBtn_reaptSet 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuLevel_A 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuSetChoiceTitle = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuDevStatus 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuTimeSet 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuReaptSet 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuReaptRem 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 	
-	stylePage_timerSetPageA 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_timerSetPageA 		= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabel_btnTimerSetPageA_timerInfo = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabel_btnTimerSetPageA_reaptInfo = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleLabel_SetInfoTitle_opreation = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleImg_menuFun_btnFun 	= (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	stylePage_timerSetPageA 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_timerSetPageA 		= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabel_btnTimerSetPageA_timerInfo = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabel_btnTimerSetPageA_reaptInfo = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleLabel_SetInfoTitle_opreation = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleImg_menuFun_btnFun 	= (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 }
 
 static void lvGui_businessMenu_timerSetPageA(lv_obj_t * obj_Parent){

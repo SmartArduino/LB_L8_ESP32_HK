@@ -312,7 +312,9 @@ static void bussiness_usrApp_actTrigTimer(void){
 							case devTypeDef_heater:
 							case devTypeDef_socket:
 							case devTypeDef_moudleSwOneBit:
+							case devTypeDef_relayBox_1bit:
 							case devTypeDef_moudleSwTwoBit:
+							case devTypeDef_relayBox_2bit:
 							case devTypeDef_moudleSwThreeBit:{
 
 								uint8_t timerUp_trigVal = usrApp_trigTimerGroup[loop].tmUp_swValTrig;
@@ -322,7 +324,8 @@ static void bussiness_usrApp_actTrigTimer(void){
 							}break;
 
 							case devTypeDef_curtain:
-							case devTypeDef_moudleSwCurtain:{
+							case devTypeDef_moudleSwCurtain:
+							case devTypeDef_relayBox_curtain:{
 
 								const uint8_t dataValReaction_coef = DEVICE_CURTAIN_ORBITAL_POSITION_MAX_VAL / 
 																	 DEV_TIMER_OPREATION_OBJSLIDER_VAL_DIV;

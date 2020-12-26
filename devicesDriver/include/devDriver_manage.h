@@ -79,7 +79,12 @@ extern "C" {
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
-void currentDev_dataPointRecovery(stt_devDataPonitTypedef *param);
+void currentDev_dataPointRecovery(stt_devDataPonitTypedef *param,
+													 bool nvsRecord_IF, 
+													 bool mutualCtrlTrig_IF, 
+													 bool statusUploadMedthod,
+													 bool synchronousReport_IF,
+													 bool syncMeshSuper_IF);
 uint8_t deviceTypeVersionJudge(uint8_t devType);
 bool deviceFistRunningJudge_get(void);
 devTypeDef_enum IRAM_ATTR currentDev_typeGet(void);

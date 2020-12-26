@@ -207,9 +207,10 @@ static void devScreenBkLight_brightnessSet(enum_screenBkLight_status val){
 	uint32_t pwmHalf_brightness = 0;
 	uint8_t compensateWe_pwmHalf_brightness = devScreenConfigParam.devScreenBkLight_brightness - devScreenConfigParam.devScreenBkLight_brightnessSleep;
 
-#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED) ||\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET) ||\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)	
 
 	return;
 #endif
@@ -309,9 +310,10 @@ void deviceHardwareAcoustoOptic_Init(void){
 
 	// PWM初始化
 	// Set configuration of timer0 for high speed channels
-#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED) ||\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET) ||\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)	
 	
 #else
 	
@@ -326,9 +328,10 @@ void deviceHardwareAcoustoOptic_Init(void){
 //	ledc_timer_config(&devLight_timer);
 
 	// Set LED Controller with previously prepared configuration
-#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED) ||\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET) ||\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)	
 		
 #else
 		
@@ -512,9 +515,10 @@ void devAcoustoOptic_statusRefresh(void){
 	static bool     devNightmodeFlg_record = false;
 	EventBits_t infraActDetect_etBits = 0;
 
-#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED) ||\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET) ||\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)	
 	
 	return;
 #endif
@@ -637,6 +641,8 @@ void devAcoustoOptic_statusRefresh(void){
 		}
 		else //非夜间模式氛围灯有效
 		{
+			static bool bkLightShutDownFlg_rcd = false;
+
 			if(devNightmodeFlg_record)devNightmodeFlg_record = false;
 
 			if(screenBkLight_shutDownFLG){ //触摸已被释放
@@ -683,7 +689,8 @@ void devAcoustoOptic_statusRefresh(void){
 					{
 						static lv_color_t colorLocal_rcd = {0};
 
-						if(memcmp(&colorLocal_rcd, &devAtmosLightRunningParam.lightColorCustomParamcfg, sizeof(lv_color_t))){
+						if(memcmp(&colorLocal_rcd, &devAtmosLightRunningParam.lightColorCustomParamcfg, sizeof(lv_color_t)) ||
+						   (bkLightShutDownFlg_rcd != screenBkLight_shutDownFLG)){
 
 							memcpy(&colorLocal_rcd, &devAtmosLightRunningParam.lightColorCustomParamcfg, sizeof(lv_color_t));
 							DEVLEDC_ATMOSPHERELED_COLORSET((colorLocal_rcd.red << 3), (colorLocal_rcd.green << 2), (colorLocal_rcd.blue << 3)); //rgb565
@@ -731,6 +738,8 @@ void devAcoustoOptic_statusRefresh(void){
 				extern void paramCfgTemp_ALCScolor_get(lv_color_t *c);
 			
 				uint16_t bLight_temp[3] = {0};
+
+				bkLightShutDownFlg_rcd = false;
 
 				if(devAtmosphereStatus_record != devAtmosphereCurrent_status){ //转场效果
 			

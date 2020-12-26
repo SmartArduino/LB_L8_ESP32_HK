@@ -119,9 +119,9 @@ static void lvGuiMenu_styleMemoryInitialization(void){
 	if(true == memAlloced_flg)return;
 	else memAlloced_flg = true;
 
-	styleText_menuLevel_A = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuLevel_B = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_menuBack_press = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	styleText_menuLevel_A = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuLevel_B = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_menuBack_press = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 }
 
 void lvGui_businessMenu(lv_obj_t * obj_Parent){

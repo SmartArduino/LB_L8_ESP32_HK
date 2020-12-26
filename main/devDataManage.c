@@ -42,6 +42,9 @@ stt_nodeObj_listManageDevCtrlBase *listHead_nodeCtrlObjBlockBaseManage = NULL;
 uint8_t devRunningTimeFromPowerUp_couter = 0; //设备启动时间 计时变量
 uint8_t devRestartDelay_counter = COUNTER_DISENABLE_MASK_SPECIALVAL_U8; //设备重启，倒计时延时执行时间
 
+int L8_DEV_SCREEN_SIZE_HOR = 0,
+	L8_DEV_SCREEN_SIZE_VER = 0;
+
 #if(SCREENSAVER_RUNNING_ENABLE == 1)
 
  stt_screensaverDispAttr screensaverDispAttrParam = {
@@ -427,7 +430,9 @@ void usrAppHomepageBtnTextDisp_defaultLoad(devTypeDef_enum devType, bool nvsReco
 		case devTypeDef_mulitSwTwoBit:
 		case devTypeDef_mulitSwThreeBit:
 		case devTypeDef_moudleSwOneBit:
+		case devTypeDef_relayBox_1bit:
 		case devTypeDef_moudleSwTwoBit:
+		case devTypeDef_relayBox_2bit:
 		case devTypeDef_moudleSwThreeBit:
 			
 			usrAppHomepageBtnTextDisp_paramSet(&dataBtnTextObjDispDefault_devTypeMulitSw, nvsRecord_IF);
@@ -435,6 +440,7 @@ void usrAppHomepageBtnTextDisp_defaultLoad(devTypeDef_enum devType, bool nvsReco
 
 		case devTypeDef_curtain:
 		case devTypeDef_moudleSwCurtain:
+		case devTypeDef_relayBox_curtain:
 			
 			usrAppHomepageBtnTextDisp_paramSet(&dataBtnTextObjDispDefault_devTypeCurtain, nvsRecord_IF);
 			break;
@@ -571,7 +577,9 @@ void usrAppHomepageBtnIconNumDisp_defaultLoad(devTypeDef_enum devType, bool nvsR
 		case devTypeDef_mulitSwTwoBit:
 		case devTypeDef_mulitSwThreeBit:
 		case devTypeDef_moudleSwOneBit:
+		case devTypeDef_relayBox_1bit:
 		case devTypeDef_moudleSwTwoBit:
+		case devTypeDef_relayBox_2bit:
 		case devTypeDef_moudleSwThreeBit:{
 
 			usrAppHomepageBtnIconNumDisp_paramSet(dataBtnIconNumObjDispDefault_devTypeMulitSw, nvsRecord_IF);
@@ -900,7 +908,10 @@ void mqttRemoteConnectCfg_paramGet(stt_mqttCfgParam *param){
 
 void mqttHaMqttServer_paramSet(stt_mqttExServerCfgParam *param, bool nvsRecord_IF){
 
-#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED) || (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET) || (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)||\ 
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
 	
 	stt_devStatusRecord devStatusRecordFlg_temp = {0};
 
@@ -2392,7 +2403,8 @@ void devSystemInfoLocalRecord_initialize(void){
 	}
 
 	/*掉电数据更新 --设备类型*/
-#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
 	extern void deviceTypeDefineByDcode_preScanning(void);
 	deviceTypeDefineByDcode_preScanning(); //拨码预读取
 	dataTemp_devTypeDef = currentDev_typeGet();
@@ -2453,7 +2465,7 @@ void devSystemInfoLocalRecord_initialize(void){
 
 	if(dataTemp_devStatusRecordIF.devStatusOnOffRecord_IF){ //设备状态存储使能，则进行恢复操作
 	
-		currentDev_dataPointRecovery(&dataTemp_devInfo_swStatus); //记忆使能则数据保持，否则初始化数据不做更改（特别是恒温器，数据不能做更改）
+		currentDev_dataPointRecovery(&dataTemp_devInfo_swStatus, false, false, false, false, false); //记忆使能则数据保持，否则初始化数据不做更改（特别是恒温器，数据不能做更改）
 //		currentDev_dataPointSet(&dataTemp_devInfo_swStatus, false, false, true, false, false); //由于时序问题改为在驱动初始化时执行操作
 	}	
 	else //特殊设备类型默认初始化数据加载
@@ -2835,6 +2847,16 @@ void devSystemInfoLocalRecord_initialize(void){
 	ESP_ERROR_CHECK( nvs_flash_deinit_partition(NVS_DATA_L8_PARTITION_NAME));
 
 	devCurrentRunningFlg &= ~DEV_RUNNING_FLG_BIT_DELAY; //延时模式所有数据掉电清空，包括运行标志
+
+	if(false == devStatusDispMethod_landscapeIf_get()){ //屏幕尺寸初始化
+		L8_DEV_SCREEN_SIZE_HOR = 240;
+		L8_DEV_SCREEN_SIZE_VER = 320;
+	}
+	else
+	{
+		L8_DEV_SCREEN_SIZE_HOR = 320;
+		L8_DEV_SCREEN_SIZE_VER = 240;
+	}	
 }
 
 void devSystemInfoLocalRecord_save(enum_dataSaveObj obj, void *dataSave){

@@ -146,7 +146,7 @@ void devDriverBussiness_datapointDefaultParamLoad(void){
 			DEVICE_THERMOSTAT_TEMPTARGET_DEFAULT,
 	};
 
-	currentDev_dataPointRecovery(&devDatapoint_temp);
+	currentDev_dataPointRecovery(&devDatapoint_temp, false, false, false, false, false);
 }
 
 void devDriverBussiness_thermostatSwitch_moudleInit(void){

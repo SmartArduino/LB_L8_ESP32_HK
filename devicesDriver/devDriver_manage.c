@@ -505,6 +505,14 @@ uint8_t deviceTypeVersionJudge(uint8_t devType){
 
 		}break;
 
+		case devTypeDef_relayBox_1bit:
+		case devTypeDef_relayBox_2bit:
+		case devTypeDef_relayBox_curtain:{
+
+			typeVersion = DEV_TYPES_PANEL_DEF_RELAY_BOX;
+
+		}break;
+
 		default:{
 
 			typeVersion = DEV_TYPES_PANEL_DEF_NULL;
@@ -593,9 +601,10 @@ bool deviceFistRunningJudge_get(void){
 
 void devDriverApp_responseAtionTrig_instant(void){ //数据点触发即时响应动作
 
-#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED) ||\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET) ||\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)	
 
 	devStatusRunning_tipsRefresh(); //tips刷新
 #else
@@ -652,13 +661,23 @@ void devDriverParamChg_dataRealesTrig(bool nvsRecord_IF,
 	devDriverApp_responseAtionTrig();
 }
 
-void currentDev_dataPointRecovery(stt_devDataPonitTypedef *param){
+void currentDev_dataPointRecovery(stt_devDataPonitTypedef *param,
+													 bool nvsRecord_IF, 
+													 bool mutualCtrlTrig_IF, 
+													 bool statusUploadMedthod,
+													 bool synchronousReport_IF,
+													 bool syncMeshSuper_IF){
 
 	//仅数据更新，驱动不响应
-	memcpy(&deviceDataPointRecord_lastTime, &lanbon_l8device_currentDataPoint, sizeof(stt_devDataPonitTypedef)); //设备状态数据点记录,当前状态转为历史状态，用于互控比对
+	if(false == mutualCtrlTrig_IF)
+		memcpy(&deviceDataPointRecord_lastTime, &lanbon_l8device_currentDataPoint, sizeof(stt_devDataPonitTypedef)); //设备状态数据点记录,当前状态转为历史状态，用于互控比对
 	memcpy(&lanbon_l8device_currentDataPoint, param, sizeof(stt_devDataPonitTypedef)); //常规响应
 
-	devDriverParamChg_dataRealesTrig(false, false, false, false, false);
+	devDriverParamChg_dataRealesTrig(nvsRecord_IF, 
+									 mutualCtrlTrig_IF, 
+									 statusUploadMedthod, 
+									 synchronousReport_IF, 
+									 syncMeshSuper_IF);
 }
 
 void currentDev_dataPointSet(stt_devDataPonitTypedef *param, 
@@ -678,7 +697,9 @@ void currentDev_dataPointSet(stt_devDataPonitTypedef *param,
 		case devTypeDef_mulitSwTwoBit:
 		case devTypeDef_mulitSwThreeBit:
 		case devTypeDef_moudleSwOneBit:
+		case devTypeDef_relayBox_1bit:
 		case devTypeDef_moudleSwTwoBit:
+		case devTypeDef_relayBox_2bit:
 		case devTypeDef_moudleSwThreeBit:{
 
 #if(DEVICE_DRIVER_DEFINITION == DEVICE_DRIVER_METHOD_BY_SLAVE_MCU) && (DRVMETHOD_BY_SLAVE_MCU_RELAY_TEST == 1)
@@ -711,7 +732,8 @@ void currentDev_dataPointSet(stt_devDataPonitTypedef *param,
 		}break;
 
 		case devTypeDef_moudleSwCurtain:
-		case devTypeDef_curtain:{
+		case devTypeDef_curtain:
+		case devTypeDef_relayBox_curtain:{
 
 			devDriverBussiness_curtainSwitch_periphStatusReales(param);
 
@@ -784,7 +806,9 @@ void currentDev_dataPointGetwithRecord(stt_devDataPonitTypedef *param){
 		case devTypeDef_mulitSwTwoBit:
 		case devTypeDef_mulitSwThreeBit:
 		case devTypeDef_moudleSwOneBit:
+		case devTypeDef_relayBox_1bit:
 		case devTypeDef_moudleSwTwoBit:
+		case devTypeDef_relayBox_2bit:
 		case devTypeDef_moudleSwThreeBit:{
 
 			static uint8_t dataPointHexTemp_localRcd = 0; //本地记录对比，每被调用时才记录
@@ -805,6 +829,7 @@ void currentDev_dataPointGetwithRecord(stt_devDataPonitTypedef *param){
 
 		case devTypeDef_curtain:
 		case devTypeDef_moudleSwCurtain:
+		case devTypeDef_relayBox_curtain:
 		case devTypeDef_heater:
 		case devTypeDef_dimmer:
 		case devTypeDef_infrared:
@@ -833,7 +858,8 @@ void currentDev_extParamSet(void *param){
 		switch(currentDev_typeGet()){ //根据设备类型进行扩展数据设置操作
 
 			case devTypeDef_curtain:
-			case devTypeDef_moudleSwCurtain:{
+			case devTypeDef_moudleSwCurtain:
+			case devTypeDef_relayBox_curtain:{
 
 				uint8_t orbitalPeriodTime_valSet = dataParam[0];
 			
@@ -881,7 +907,8 @@ void currentDev_extParamGet(uint8_t paramTemp[DEVPARAMEXT_DT_LEN]){
 	switch(currentDev_typeGet()){ //扩展数据填装
 
 		case devTypeDef_curtain:
-		case devTypeDef_moudleSwCurtain:{
+		case devTypeDef_moudleSwCurtain:
+		case devTypeDef_relayBox_curtain:{
 
 			paramTemp[0] = devCurtain_currentPositionPercentGet();
 
@@ -920,7 +947,9 @@ void currentDev_extParamGet(uint8_t paramTemp[DEVPARAMEXT_DT_LEN]){
 		case devTypeDef_dimmer:
 		case devTypeDef_socket:
 		case devTypeDef_moudleSwOneBit:
+		case devTypeDef_relayBox_1bit:
 		case devTypeDef_moudleSwTwoBit:
+		case devTypeDef_relayBox_2bit:
 		case devTypeDef_moudleSwThreeBit:
 		case devTypeDef_fans:
 		case devTypeDef_scenario:
@@ -996,7 +1025,9 @@ void funcation_usrAppMutualCtrlActionTrig(void){
 		case devTypeDef_mulitSwTwoBit:
 		case devTypeDef_mulitSwThreeBit:
 		case devTypeDef_moudleSwOneBit:
+		case devTypeDef_relayBox_1bit:
 		case devTypeDef_moudleSwTwoBit:
+		case devTypeDef_relayBox_2bit:
 		case devTypeDef_moudleSwThreeBit:{
 
 			uint8_t dataPointHexTemp_current = 0,
@@ -1029,6 +1060,7 @@ void funcation_usrAppMutualCtrlActionTrig(void){
 
 		case devTypeDef_curtain:
 		case devTypeDef_moudleSwCurtain:
+		case devTypeDef_relayBox_curtain:
 		case devTypeDef_dimmer:{
 
 			if((devMutualCtrlGroup_dataTemp[0].mutualCtrlGroup_insert != DEVICE_MUTUALGROUP_INVALID_INSERT_A) &&
@@ -1093,7 +1125,9 @@ void funcation_usrAppMutualCtrlActionTrig(void){
 				case devTypeDef_mulitSwTwoBit:
 				case devTypeDef_mulitSwThreeBit:
 				case devTypeDef_moudleSwOneBit:
+				case devTypeDef_relayBox_1bit:
 				case devTypeDef_moudleSwTwoBit:
+				case devTypeDef_relayBox_2bit:
 				case devTypeDef_moudleSwThreeBit:
 				case devTypeDef_thermostatExtension:{
 
@@ -1120,6 +1154,7 @@ void funcation_usrAppMutualCtrlActionTrig(void){
 
 				case devTypeDef_curtain:
 				case devTypeDef_moudleSwCurtain:
+				case devTypeDef_relayBox_curtain:
 				case devTypeDef_dimmer:{
 
 					dataMutualCtrlReq_temp[0] = L8DEV_MESH_CMD_MUTUAL_CTRL;
@@ -1241,7 +1276,9 @@ void devDriverManageBussiness_initialition(void){
 		case devTypeDef_mulitSwTwoBit:
 		case devTypeDef_mulitSwThreeBit:
 		case devTypeDef_moudleSwOneBit:
+		case devTypeDef_relayBox_1bit:
 		case devTypeDef_moudleSwTwoBit:
+		case devTypeDef_relayBox_2bit:
 		case devTypeDef_moudleSwThreeBit:{
 
 			devDriverBussiness_mulitBitSwitch_moudleInit();
@@ -1267,7 +1304,8 @@ void devDriverManageBussiness_initialition(void){
 		}break;
 		
 		case devTypeDef_curtain:
-		case devTypeDef_moudleSwCurtain:{
+		case devTypeDef_moudleSwCurtain:
+		case devTypeDef_relayBox_curtain:{
 
 			devDriverBussiness_curtainSwitch_moudleInit();
 

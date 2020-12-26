@@ -46,7 +46,7 @@ extern "C" {
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
-
+bool devSystemMqttIsConnected(void);
 void mqtt_app_start(void);
 void mqtt_app_stop(void);
 void mqtt_app_destory(void);

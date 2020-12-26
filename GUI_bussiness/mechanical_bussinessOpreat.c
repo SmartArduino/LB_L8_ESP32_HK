@@ -48,6 +48,16 @@
  #define DEV_MOUDLE_DCODE_FLGVAL_FUNC_C  0x08
  #define DEV_MOUDLE_DCODE_FLGVAL_FUNC_D  0x04
  #define DEV_MOUDLE_DCODE_FLGVAL_FUNC_E  0x03
+
+#elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
+
+ #define DEV_RELAY_USR_KEY_PIN			(4)
+
+ #define DEV_RELAY_USR_DEVDEF_PIN_C0	(26)
+
+ #define DEV_RELAY_DCODE_FLGVAL_FUNC_A	 0
+ #define DEV_RELAY_DCODE_FLGVAL_FUNC_B	 1
+
 #endif
 
 static uint8_t 	val_dcode_Local = 0;
@@ -90,7 +100,8 @@ static void mechOpreatDevDatapoint_opreatNormal(uint8_t devCtrlVal){
 				
 		}break;
 		
-		case devTypeDef_moudleSwTwoBit:{
+		case devTypeDef_moudleSwTwoBit:
+		case devTypeDef_relayBox_2bit:{
 
 			if(devCtrlVal & (1 << 0)){
 
@@ -195,6 +206,29 @@ static void mechOpreatUsrKey_opreatShort(void){
 	currentDev_dataPointSet(&devDataPoint_setTemp, true, true, true, true, true);
 
 #elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+#elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
+
+	stt_devDataPonitTypedef devDataPoint_getTemp = {0};
+	stt_devDataPonitTypedef devDataPoint_setTemp = {0};
+
+	currentDev_dataPointGet(&devDataPoint_getTemp);	
+	switch(currentDev_typeGet()){
+		case devTypeDef_relayBox_1bit:
+			devDataPoint_setTemp.devType_mulitSwitch_oneBit.swVal_bit1 =\
+				!devDataPoint_getTemp.devType_mulitSwitch_oneBit.swVal_bit1;
+			currentDev_dataPointSet(&devDataPoint_setTemp, true, true, true, true, true);
+			break;
+		case devTypeDef_relayBox_curtain:{
+			static bool rcdState = false;
+			rcdState = !rcdState;
+			(true == rcdState)?
+				(devDataPoint_setTemp.devType_curtain.devCurtain_actEnumVal = curtainRunningStatus_cTact_open):
+				(devDataPoint_setTemp.devType_curtain.devCurtain_actEnumVal = curtainRunningStatus_cTact_close);
+			devDataPoint_setTemp.devType_curtain.devCurtain_actMethod = 0;
+			currentDev_dataPointSet(&devDataPoint_setTemp, true, true, true, true, true);
+		}break;
+		default:break;
+	}
 
 #endif
 }
@@ -206,6 +240,8 @@ static void mechOpreatUsrKey_opreatLongA(void){
 #elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)
 
 #elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+
+#elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
 
 #endif
 
@@ -262,6 +298,10 @@ static uint8_t mechOpreatDetect_dcodeValGet(void){ //低电平为 1，高电平�
 
 	if(!gpio_get_level(DEV_MOUDLE_DCODE_1_PIN))valDcode |= 1 << 5;
 	else valDcode &= ~(1 << 5);
+#elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
+
+	if(!gpio_get_level(DEV_RELAY_USR_DEVDEF_PIN_C0))valDcode |= 1 << 0;
+	else valDcode &= ~(1 << 0);
 #endif
 
 	return valDcode;
@@ -416,6 +456,30 @@ static void mechOpreatDetect_dcodeScanning(void){
 //			printf("devType:%02X.\n", currentDev_typeGet());
 		}
 	}	
+
+#elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
+
+	if(val_CHG){
+
+		val_CHG	= false;
+
+		val_dcode_differ 	= val_dcode_Local ^ val_dcodeCfm;
+		val_dcode_Local 	= val_dcodeCfm	  = val_dcodeTmp;
+
+		switch(val_dcodeCfm){
+
+			case DEV_RELAY_DCODE_FLGVAL_FUNC_A: currentDev_typeSet(devTypeDef_relayBox_1bit, false);
+					break;
+			case DEV_RELAY_DCODE_FLGVAL_FUNC_B: currentDev_typeSet(devTypeDef_relayBox_curtain, false);
+					break;
+			default:break;
+		}
+		
+		devDriverManageBussiness_deviceChangeRefresh(); //驱动更新
+		devSystemInfoLocalRecord_normalClear();
+
+		// printf("devRelayBox type defCode chg:%02X.\n", val_dcode_Local);
+	}
 #endif
 }
 
@@ -649,6 +713,8 @@ static bool mechOpreatDetect_usrKeyValGet(void){
 	valKey = !gpio_get_level(DEV_SOCKET_USR_KEY_PIN);
 #elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
 	valKey = !gpio_get_level(DEV_MOUDLE_USR_KEY_PIN);
+#elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
+	valKey = !gpio_get_level(DEV_RELAY_USR_KEY_PIN);
 #endif
 	
 	return valKey;
@@ -725,7 +791,8 @@ void devMechanicalOpreatTimeCounter_realesing(void){
 
 #if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)|\
    (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)|\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)|\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
 
 	COUNTER_COUNTING_DOWN_LEGAL_U16(edCounter_usrKey)
 	COUNTER_COUNTING_DOWN_LEGAL_U16(edCounter_button)
@@ -808,7 +875,18 @@ void deviceTypeDefineByDcode_preScanning(void){
 			default:break;
 		}
 	}
-	
+
+#elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
+
+	switch(val_dcode_Local){
+		case DEV_RELAY_DCODE_FLGVAL_FUNC_A:
+				currentDev_typeSet(devTypeDef_relayBox_1bit, false);
+				break;
+		case DEV_RELAY_DCODE_FLGVAL_FUNC_B:
+				currentDev_typeSet(devTypeDef_relayBox_curtain, false);
+				break;
+		default:break;
+	}	
 #endif
 }
 
@@ -847,6 +925,12 @@ void devMechanicalOpreatPeriphInit(void){
 						   (1ULL << DEV_MOUDLE_DCODE_6_PIN);
 	io_conf.pull_down_en = 0;
 	io_conf.pull_up_en 	 = 1;
+#elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
+
+	io_conf.pin_bit_mask = (1ULL << DEV_RELAY_USR_KEY_PIN) |\
+						   (1ULL << DEV_RELAY_USR_DEVDEF_PIN_C0);
+	io_conf.pull_down_en = 0;
+	io_conf.pull_up_en   = 1;
 #endif
 	//configure GPIO with the given settings
 	gpio_config(&io_conf);

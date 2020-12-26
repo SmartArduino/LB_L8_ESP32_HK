@@ -58,7 +58,13 @@
  #define DEV_MOUDLE_STATUS_TIPS_PIN			(2)
 
  #define tipsSocket_L_set(x)			   	gpio_set_level(DEV_MOUDLE_STATUS_TIPS_PIN, x)
- 
+
+#elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
+
+ #define DEV_RELAY_STATUS_TIPS_PIN		    (32)
+
+ #define tipsRelay_L_set(x) 			    gpio_set_level(DEV_RELAY_STATUS_TIPS_PIN, x)
+  
 #endif
 
 static enum_tipsNetworkStatus 			tipsNetworkStatus 			 = ntStatus_noneNet;
@@ -457,6 +463,91 @@ void devTipsByLed_driverReales(void){
 		}break;
 	}
 
+#elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
+
+	switch(tipsDevNoneScr_runningStatus){
+
+		case tipsRunningStatus_normal:{
+
+			switch(tipsNetworkStatus){
+			
+				case ntStatus_noneNet:{ //灭
+			
+					tipsRelay_L_set(1);
+			
+				}break;
+			
+				case ntStatus_offline:{ //闪
+			
+					if(tipsRunningParam.actCounter)tipsRunningParam.actCounter --;
+					else{
+			
+						actPeriodValInt = (uint16_t)actPeriodValFoloat_A;
+						tipsRunningParam.actCounter = actPeriodValInt;
+					
+						tipsRunningParam.lightLevel = !tipsRunningParam.lightLevel;
+					
+						tipsRelay_L_set(tipsRunningParam.lightLevel);
+					}
+			
+				}break;
+			
+				case ntStatus_online:{ //亮
+			
+					tipsRelay_L_set(0);
+			
+				}break;
+			
+				default:break;
+			}
+
+		}break;
+		
+		case tipsRunningStatus_upgrading:{
+
+			if(!tipsAbnormalCounter)tipsDevNoneScr_runningStatus = tipsRunningStatus_normal;
+			else{
+
+				if(tipsRunningParam.actCounter)tipsRunningParam.actCounter --;
+				else{
+				
+					actPeriodValInt = (uint16_t)actPeriodValFoloat_B;
+					tipsRunningParam.actCounter = actPeriodValInt;
+				
+					tipsRunningParam.lightLevel = !tipsRunningParam.lightLevel;
+				
+					tipsRelay_L_set(tipsRunningParam.lightLevel);
+				}
+			}
+
+		}break;
+		
+		case tipsRunningStatus_funcTrig:{
+
+			if(!tipsAbnormalCounter)tipsDevNoneScr_runningStatus = tipsRunningStatus_normal;
+			else{
+			
+				if(tipsRunningParam.actCounter)tipsRunningParam.actCounter --;
+				else{
+				
+					actPeriodValInt = (uint16_t)actPeriodValFoloat_C;
+					tipsRunningParam.actCounter = actPeriodValInt;
+				
+					tipsRunningParam.lightLevel = !tipsRunningParam.lightLevel;
+				
+					tipsRelay_L_set(tipsRunningParam.lightLevel);
+				}
+			}
+
+		}break;
+
+		default:{
+
+			tipsAbnormalCounter = 0;
+		
+		}break;
+	}
+
 #endif
 
 	if(loopCounter_1s < loopPeriod_1s)loopCounter_1s ++;
@@ -597,6 +688,11 @@ void devTipsAcoustoOpticPeriphInit(void){
 	io_conf.pin_bit_mask = (1ULL << DEV_MOUDLE_STATUS_TIPS_PIN);
 	io_conf.pull_down_en = 0;
 	io_conf.pull_up_en 	 = 1;
+#elif(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
+
+	 io_conf.pin_bit_mask = (1ULL << DEV_RELAY_STATUS_TIPS_PIN);
+	 io_conf.pull_down_en = 0;
+	 io_conf.pull_up_en   = 1;
 #endif
 	//configure GPIO with the given settings
 	gpio_config(&io_conf);

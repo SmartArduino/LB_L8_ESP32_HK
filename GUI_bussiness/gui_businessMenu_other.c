@@ -44,6 +44,7 @@ static lv_obj_t *labelSysInfo_devTime = NULL;
 static lv_obj_t *labelSysInfo_devMachineTime = NULL;
 static lv_obj_t *labelSysInfo_devSoftVersion = NULL;
 static lv_obj_t *labelSysInfo_devReserveHeap = NULL;
+static lv_obj_t *labelSysInfo_devRsvHeapInterMini = NULL;
 static lv_obj_t *labelSysInfo_strHkSetupCode = NULL;
 static lv_obj_t *labelSysInfo_topicBssid = NULL;
 static lv_obj_t *labelSysInfo_devMac = NULL;
@@ -152,11 +153,11 @@ static void lvGuiOther_styleMemoryInitialization(void){
 	if(true == memAlloced_flg)return;
 	else memAlloced_flg = true;
 
-	labelStyle_sysInfo = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	stylePage_sysInfo = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleText_menuLevel_A = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleImg_menuFun_btnFun = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
-	styleBtn_specialTransparent = (lv_style_t *)os_zalloc(sizeof(lv_style_t));
+	labelStyle_sysInfo = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	stylePage_sysInfo = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleText_menuLevel_A = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleImg_menuFun_btnFun = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
+	styleBtn_specialTransparent = (lv_style_t *)LV_MEM_CUSTOM_ALLOC(sizeof(lv_style_t));
 }
 
 void lvGuiOther_styleApplicationInit(void){
@@ -258,9 +259,7 @@ void lvGuiOther_devInfoRefresh(void){
 	sprintf(textDisp_temp, "Mechine time: \n  #408080 %s%d:%02d:%02d#", textTabAlign, machineTimeTemp.tH, machineTimeTemp.tM, machineTimeTemp.tS);
 	lv_label_set_text(labelSysInfo_devMachineTime, textDisp_temp);
 
-#if(L8_DEVICE_TYPE_PANEL_DEF != DEV_TYPES_PANEL_DEF_INDEP_HEATER) &&\
-   (L8_DEVICE_TYPE_PANEL_DEF != DEV_TYPES_PANEL_DEF_MULIT_THERMO) &&\
-   (L8_DEVICE_TYPE_PANEL_DEF != DEV_TYPES_PANEL_DEF_THERMO_INDP_A)//热水器及恒温器电量功能暂隐
+#if(0 == LVAPP_DISP_ELECPARAM_HIDDEN_EN)//热水器及恒温器电量功能暂隐
 	
 		memset(textDisp_temp, 0, sizeof(char) * textTempSize);
 		sprintf(textDisp_temp, "Device power: \n  #408080 %s%.01f# W", textTabAlign, devDriverBussiness_elecMeasure_valElecPowerGet());
@@ -274,6 +273,10 @@ void lvGuiOther_devInfoRefresh(void){
 	memset(textDisp_temp, 0, sizeof(char) * textTempSize);
 	sprintf(textDisp_temp, "Free heap: \n  #00A2E8 %s%d# Bytes", textTabAlign, esp_get_free_heap_size());
 	lv_label_set_text(labelSysInfo_devReserveHeap, textDisp_temp);
+
+	memset(textDisp_temp, 0, sizeof(char) * textTempSize);
+	sprintf(textDisp_temp, "Free heap(interMini): \n  #00A2E8 %s%d# Bytes", textTabAlign, heap_caps_get_minimum_free_size(MALLOC_CAP_8BIT | MALLOC_CAP_INTERNAL));
+	lv_label_set_text(labelSysInfo_devRsvHeapInterMini, textDisp_temp);
 
 	memset(textDisp_temp, 0, sizeof(char) * textTempSize);
 	sprintf(textDisp_temp, "Homekit setup code: \n  #E0E000 %s%s#", textTabAlign, strHK_setupCode);
@@ -442,7 +445,7 @@ void lvGui_businessMenu_other(lv_obj_t * obj_Parent){
 	if(devStatusDispMethod_landscapeIf_get()){
 		
 		lv_page_set_scrl_width(page_sysInfo, 300); 
-		lv_page_set_scrl_height(page_sysInfo, 1180); 
+		lv_page_set_scrl_height(page_sysInfo, 1240); 
 	}
 	else
 	{
@@ -460,9 +463,7 @@ void lvGui_businessMenu_other(lv_obj_t * obj_Parent){
 	labelSysInfo_devSoftVersion = lv_label_create(page_sysInfo, labelSysInfo_devTime);
 	lv_obj_align(labelSysInfo_devSoftVersion, 	page_sysInfo, LV_ALIGN_IN_TOP_LEFT, textHorizontalDistance, objLayoutCursor += textVerticalDistance + 20);
 	
-#if(L8_DEVICE_TYPE_PANEL_DEF != DEV_TYPES_PANEL_DEF_INDEP_HEATER) &&\
-   (L8_DEVICE_TYPE_PANEL_DEF != DEV_TYPES_PANEL_DEF_MULIT_THERMO) &&\
-   (L8_DEVICE_TYPE_PANEL_DEF != DEV_TYPES_PANEL_DEF_THERMO_INDP_A)//热水器及恒温器电量功能暂隐
+#if(0 == LVAPP_DISP_ELECPARAM_HIDDEN_EN)//热水器及恒温器电量功能暂隐
 	
 	labelSysInfo_devPower = lv_label_create(page_sysInfo,		labelSysInfo_devTime);
 	lv_obj_align(labelSysInfo_devPower, 		page_sysInfo, LV_ALIGN_IN_TOP_LEFT, textHorizontalDistance, objLayoutCursor += textVerticalDistance);
@@ -471,6 +472,8 @@ void lvGui_businessMenu_other(lv_obj_t * obj_Parent){
 #endif
 	labelSysInfo_devReserveHeap = lv_label_create(page_sysInfo, labelSysInfo_devTime);
 	lv_obj_align(labelSysInfo_devReserveHeap, 	page_sysInfo, LV_ALIGN_IN_TOP_LEFT, textHorizontalDistance, objLayoutCursor += textVerticalDistance);
+	labelSysInfo_devRsvHeapInterMini = lv_label_create(page_sysInfo, labelSysInfo_devTime);
+	lv_obj_align(labelSysInfo_devRsvHeapInterMini, 	page_sysInfo, LV_ALIGN_IN_TOP_LEFT, textHorizontalDistance, objLayoutCursor += textVerticalDistance);
 	labelSysInfo_strHkSetupCode = lv_label_create(page_sysInfo, labelSysInfo_devTime);
 	lv_obj_align(labelSysInfo_strHkSetupCode, 	page_sysInfo, LV_ALIGN_IN_TOP_LEFT, textHorizontalDistance, objLayoutCursor += textVerticalDistance);
 	labelSysInfo_topicBssid = lv_label_create(page_sysInfo, 	labelSysInfo_devTime);

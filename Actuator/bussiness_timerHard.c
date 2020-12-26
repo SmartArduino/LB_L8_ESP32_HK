@@ -264,7 +264,8 @@ static void IRAM_ATTR bussinessHwTimer_loop_1s(void){ //内部存储操作无法
 				}break;
 				
 				case devTypeDef_curtain:
-				case devTypeDef_moudleSwCurtain:{ //窗帘静止时指定值
+				case devTypeDef_moudleSwCurtain:
+				case devTypeDef_relayBox_curtain:{ //窗帘静止时指定值
 			
 					stt_devCurtain_runningParam curtainRunningParam = {0};
 			
@@ -383,7 +384,8 @@ static void IRAM_ATTR bussinessHwTimer_devDriverWork(void){
 		}break;
 
 		case devTypeDef_curtain:
-		case devTypeDef_moudleSwCurtain:{
+		case devTypeDef_moudleSwCurtain:
+		case devTypeDef_relayBox_curtain:{
 
 			if(loopCounter_curtainRunningDetect.loopCounter < loopCounter_curtainRunningDetect.loopPeriod)loopCounter_curtainRunningDetect.loopCounter ++;
 			else{
@@ -637,7 +639,8 @@ static void taskFunction_dataHandleFromHwTimer(void *arg){
 					switch(currentDev_typeGet()){
 						
 						case devTypeDef_curtain:
-						case devTypeDef_moudleSwCurtain:{
+						case devTypeDef_moudleSwCurtain:
+						case devTypeDef_relayBox_curtain:{
 					
 							devStatusValSet_temp.devType_curtain.devCurtain_actMethod = 1; //位置定时，用滑条方式
 						
@@ -712,7 +715,7 @@ static void taskFunction_dataHandleFromHwTimer(void *arg){
 						case devTypeDef_mulitSwOneBit:{
 
 							(gModeOpFuncParam.opStatusNormal == 1)?
-								(devStatusValSet_temp.devType_mulitSwitch_oneBit.swVal_bit1 = 1):
+								(devStatusValSet_temp.devType_mulitSwitch_oneBit.swVal_bit1 = 1):
 								(devStatusValSet_temp.devType_mulitSwitch_oneBit.swVal_bit1 = 0);
 
 						}break;
@@ -724,13 +727,13 @@ static void taskFunction_dataHandleFromHwTimer(void *arg){
 							if(gModeOpFuncParam.opRelaySel & (1 << 0)){
 
 								(gModeOpFuncParam.opStatusNormal == 1)?
-									(devStatusValSet_temp.devType_mulitSwitch_twoBit.swVal_bit1 = 1):
+									(devStatusValSet_temp.devType_mulitSwitch_twoBit.swVal_bit1 = 1):
 									(devStatusValSet_temp.devType_mulitSwitch_twoBit.swVal_bit1 = 0);
 							}
 							if(gModeOpFuncParam.opRelaySel & (1 << 1)){
 
 								(gModeOpFuncParam.opStatusNormal == 1)?
-									(devStatusValSet_temp.devType_mulitSwitch_twoBit.swVal_bit2 = 1):
+									(devStatusValSet_temp.devType_mulitSwitch_twoBit.swVal_bit2 = 1):
 									(devStatusValSet_temp.devType_mulitSwitch_twoBit.swVal_bit2 = 0);
 							}
 
@@ -743,26 +746,27 @@ static void taskFunction_dataHandleFromHwTimer(void *arg){
 							if(gModeOpFuncParam.opRelaySel & (1 << 0)){
 
 								(gModeOpFuncParam.opStatusNormal == 1)?
-									(devStatusValSet_temp.devType_mulitSwitch_threeBit.swVal_bit1 = 1):
+									(devStatusValSet_temp.devType_mulitSwitch_threeBit.swVal_bit1 = 1):
 									(devStatusValSet_temp.devType_mulitSwitch_threeBit.swVal_bit1 = 0);
 							}
 							if(gModeOpFuncParam.opRelaySel & (1 << 1)){
 
 								(gModeOpFuncParam.opStatusNormal == 1)?
-									(devStatusValSet_temp.devType_mulitSwitch_threeBit.swVal_bit2 = 1):
+									(devStatusValSet_temp.devType_mulitSwitch_threeBit.swVal_bit2 = 1):
 									(devStatusValSet_temp.devType_mulitSwitch_threeBit.swVal_bit2 = 0);
 							}
 							if(gModeOpFuncParam.opRelaySel & (1 << 2)){
 
 								(gModeOpFuncParam.opStatusNormal == 1)?
-									(devStatusValSet_temp.devType_mulitSwitch_threeBit.swVal_bit3 = 1):
+									(devStatusValSet_temp.devType_mulitSwitch_threeBit.swVal_bit3 = 1):
 									(devStatusValSet_temp.devType_mulitSwitch_threeBit.swVal_bit3 = 0);
 							}
 
 						}break;
 						
 						case devTypeDef_curtain:
-						case devTypeDef_moudleSwCurtain:{
+						case devTypeDef_moudleSwCurtain:
+						case devTypeDef_relayBox_curtain:{
 
 							devStatusValSet_temp.devType_curtain.devCurtain_actEnumVal = curtainRunningStatus_cTact_close; //全关
 
@@ -837,7 +841,8 @@ static void taskFunction_dataHandleFromHwTimer(void *arg){
 					switch(swCurrentDevType){
 
 						case devTypeDef_curtain:
-						case devTypeDef_moudleSwCurtain:{
+						case devTypeDef_moudleSwCurtain:
+						case devTypeDef_relayBox_curtain:{
 
 							stt_devCurtain_runningParam devCurtainRunningParam = {0};
 

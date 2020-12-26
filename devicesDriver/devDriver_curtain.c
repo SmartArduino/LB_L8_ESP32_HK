@@ -25,15 +25,24 @@
  #define DEVDRIVER_CURTAIN_ACTION_CLOSE()			devDriverAppFromISR_statusExexuteBySlaveMcu(0x01)
 #else
 
- #define DEVDRIVER_CURTAIN_ACTION_OPEN()			gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY1, (uint32_t)0);\
-													gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY2, (uint32_t)1);\
-													gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY3, (uint32_t)0)
- #define DEVDRIVER_CURTAIN_ACTION_STOP()			gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY1, (uint32_t)0);\
-													gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY2, (uint32_t)0);\
-													gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY3, (uint32_t)0)
- #define DEVDRIVER_CURTAIN_ACTION_CLOSE()			gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY1, (uint32_t)0);\
-													gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY2, (uint32_t)0);\
-													gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY3, (uint32_t)1)
+ #if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)
+  #define DEVDRIVER_CURTAIN_ACTION_OPEN() 		  	gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY1, (uint32_t)1);\
+												  	gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY2, (uint32_t)0)
+  #define DEVDRIVER_CURTAIN_ACTION_STOP() 		  	gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY1, (uint32_t)0);\
+													gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY2, (uint32_t)0)
+  #define DEVDRIVER_CURTAIN_ACTION_CLOSE()		  	gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY2, (uint32_t)1);\
+												  	gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY1, (uint32_t)0)
+ #else
+  #define DEVDRIVER_CURTAIN_ACTION_OPEN() 		  	gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY1, (uint32_t)0);\
+												  	gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY3, (uint32_t)0);\
+												  	gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY2, (uint32_t)1)
+  #define DEVDRIVER_CURTAIN_ACTION_STOP() 		  	gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY1, (uint32_t)0);\
+												  	gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY2, (uint32_t)0);\
+												  	gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY3, (uint32_t)0)
+  #define DEVDRIVER_CURTAIN_ACTION_CLOSE()		  	gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY1, (uint32_t)0);\
+												  	gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY2, (uint32_t)0);\
+												 	gpio_set_level(DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY3, (uint32_t)1)
+ #endif
 #endif
 
 static bool devDriver_moudleInitialize_Flg = false;
@@ -86,16 +95,17 @@ void devDriverBussiness_curtainSwitch_periphInit(void){
 	devTypeDef_enum swCurrentDevType = currentDev_typeGet();
 	gpio_config_t io_conf = {0};
 
-	if((swCurrentDevType != devTypeDef_curtain) &&
-		(swCurrentDevType != devTypeDef_moudleSwCurtain))return;
+	if((swCurrentDevType != devTypeDef_curtain)&&\
+	   (swCurrentDevType != devTypeDef_moudleSwCurtain)&&\
+	   (swCurrentDevType != devTypeDef_relayBox_curtain))return;
 	
 	//disable interrupt
 	io_conf.intr_type = GPIO_PIN_INTR_DISABLE;
 	//set as output mode
 	io_conf.mode = GPIO_MODE_OUTPUT;
 	//bit mask of the pins that you want to set
-	io_conf.pin_bit_mask = (1ULL << DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY1) | 
-						   (1ULL << DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY2) | 
+	io_conf.pin_bit_mask = (1ULL << DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY1)|\ 
+						   (1ULL << DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY2)|\ 
 						   (1ULL << DEVDRIVER_CURTAIN_GPIO_OUTPUT_IO_RLY3);
 	//disable pull-down mode
 	io_conf.pull_down_en = 0;
@@ -116,9 +126,10 @@ void devDriverBussiness_curtainSwitch_moudleInit(void){
 
 	devTypeDef_enum swCurrentDevType = currentDev_typeGet();
 
-	if((swCurrentDevType != devTypeDef_curtain) &&
-	   (swCurrentDevType != devTypeDef_moudleSwCurtain))return;
-	if(devDriver_moudleInitialize_Flg)return;
+	if((swCurrentDevType != devTypeDef_curtain)&&\
+	   (swCurrentDevType != devTypeDef_moudleSwCurtain)&&\
+	   (swCurrentDevType != devTypeDef_relayBox_curtain))return;
+	if(true == devDriver_moudleInitialize_Flg)return;
 
 #if(DEVICE_DRIVER_DEFINITION == DEVICE_DRIVER_METHOD_BY_SLAVE_MCU)
 			
@@ -239,7 +250,7 @@ bool IRAM_ATTR devDriverBussiness_curtainSwitch_devRunningDetect(void){ //开关
 					devParam_curtain.act = curtainRunningStatus_cTact_stop;
 
 					devDataPoint.devType_curtain.devCurtain_actEnumVal = curtainRunningStatus_cTact_stop;
-					currentDev_dataPointRecovery(&devDataPoint);
+					currentDev_dataPointRecovery(&devDataPoint, false, false, false, false, false);
 
 					deviceDatapointSynchronousReport_actionTrig(); //状态反向同步
 				}
@@ -264,7 +275,7 @@ bool IRAM_ATTR devDriverBussiness_curtainSwitch_devRunningDetect(void){ //开关
 					devParam_curtain.act = curtainRunningStatus_cTact_stop;
 
 					devDataPoint.devType_curtain.devCurtain_actEnumVal = curtainRunningStatus_cTact_stop;
-					currentDev_dataPointRecovery(&devDataPoint);
+					currentDev_dataPointRecovery(&devDataPoint, false, false, false, false, false);
 
 					deviceDatapointSynchronousReport_actionTrig(); //状态反向同步
 				}
@@ -310,8 +321,9 @@ static void devDriverBussiness_curtainSwitch_periphStatusRealesByBtn(stt_devData
 
 	devTypeDef_enum swCurrentDevType = currentDev_typeGet();
 
-	if((swCurrentDevType == devTypeDef_curtain) ||
-	   (swCurrentDevType == devTypeDef_moudleSwCurtain)){
+	if((swCurrentDevType == devTypeDef_curtain)||\
+	   (swCurrentDevType == devTypeDef_moudleSwCurtain)||\
+	   (swCurrentDevType == devTypeDef_relayBox_curtain)){
 
 		devParam_curtain.act = param->devType_curtain.devCurtain_actEnumVal;
 
@@ -335,8 +347,9 @@ static void devDriverBussiness_curtainSwitch_periphStatusRealesBySlide(stt_devDa
 
 	devTypeDef_enum swCurrentDevType = currentDev_typeGet();
 
-	if((swCurrentDevType == devTypeDef_curtain) ||
-	   (swCurrentDevType == devTypeDef_moudleSwCurtain)){
+	if((swCurrentDevType == devTypeDef_curtain)||\
+	   (swCurrentDevType == devTypeDef_moudleSwCurtain)||\
+	   (swCurrentDevType == devTypeDef_relayBox_curtain)){
 
 		devParam_curtain.act = curtainRunningStatus_cTact_custom;
 	

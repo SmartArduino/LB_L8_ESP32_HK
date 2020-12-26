@@ -693,9 +693,10 @@ void dataHandler_devNodeMeshData(const uint8_t *src_addr, const mlink_httpd_type
 
 		case L8DEV_MESH_CMD_SPEQUERY_NOTICE:{
 			
-#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)|\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)|\
-   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)
+#if(L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_INFRARED)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_SOCKET)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_INDEP_MOUDLE)||\
+   (L8_DEVICE_TYPE_PANEL_DEF == DEV_TYPES_PANEL_DEF_RELAY_BOX)	
 			
 			devBeepTips_trig(4, 8, 100, 40, 2); //beeps提示
 #else
@@ -744,7 +745,9 @@ void dataHandler_devNodeMeshData(const uint8_t *src_addr, const mlink_httpd_type
 					case devTypeDef_mulitSwTwoBit:
 					case devTypeDef_mulitSwThreeBit:
 					case devTypeDef_moudleSwOneBit:
+					case devTypeDef_relayBox_1bit:
 					case devTypeDef_moudleSwTwoBit:
+					case devTypeDef_relayBox_2bit:
 					case devTypeDef_moudleSwThreeBit:{
 
 						bool mutualCtrl_reserveIf = false;
@@ -842,6 +845,7 @@ void dataHandler_devNodeMeshData(const uint8_t *src_addr, const mlink_httpd_type
 
 					case devTypeDef_curtain:
 					case devTypeDef_moudleSwCurtain:
+					case devTypeDef_relayBox_curtain:
 					case devTypeDef_dimmer:{
 
 						if(mutualCtrlTrigIf_A)
@@ -1043,7 +1047,7 @@ void usrApp_devNodeStatusSynchronousInitiative(void){
 	esp_wifi_get_mac(ESP_IF_WIFI_STA, &dataTrans_temp[6]);  //payload ist5 - 10：MAC地址
 
 	ret = mwifi_write(devMacAddr_root, &data_type, dataTrans_temp, dataTrans_tempLen, true);
-	MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+	USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 }
 
 void usrApp_devNodeHomeassistantOnlineNotice(void){
@@ -1070,7 +1074,7 @@ void usrApp_devNodeHomeassistantOnlineNotice(void){
 	esp_wifi_get_mac(ESP_IF_WIFI_STA, &dataTrans_temp[1]);  //payload ist5 - 10：MAC地址
 
 	ret = mwifi_write(devMacAddr_root, &data_type, dataTrans_temp, dataTrans_tempLen, true);
-	MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
+	USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mqtt mwifi_root_write", mdf_err_to_name(ret));
 }
 
 void devDetailParamManageList_rootNoticeTrig(uint8_t destMac[MWIFI_ADDR_LEN]){
@@ -1135,7 +1139,7 @@ void devDetailParamManageList_rootNoticeTrig(uint8_t destMac[MWIFI_ADDR_LEN]){
 										   dataRespPerPackBuff,
 										   meshData_pbLen, 
 										   true);
-					MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> devDetail info list notice from root mwifi_translate", mdf_err_to_name(ret));
+					USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> devDetail info list notice from root mwifi_translate", mdf_err_to_name(ret));
 					memset(dataRespPerPackBuff, 0, sizeof(uint8_t) * USRAPP_LOCAL_MESH_DATATRANS_PERPACK_MAX_LEN); //数据发送缓存清空
 					printf("devDetail list respond loop%d res:%08X.\n", loop, ret);
 				}
@@ -1157,7 +1161,7 @@ void devDetailParamManageList_rootNoticeTrig(uint8_t destMac[MWIFI_ADDR_LEN]){
 									   dataRespPerPackBuff,
 									   meshData_pbLen, 
 									   true);
-				MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> devDetail info list notice from root mwifi_translate", mdf_err_to_name(ret));
+				USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> devDetail info list notice from root mwifi_translate", mdf_err_to_name(ret));
 				memset(dataRespPerPackBuff, 0, sizeof(uint8_t) * USRAPP_LOCAL_MESH_DATATRANS_PERPACK_MAX_LEN); //数据发送缓存清空
 				printf("devDetail list respond last res:%08X.\n", ret);
 			}
@@ -1231,7 +1235,7 @@ void deviceDetailInfoListRequest_bussinessTrig(void){
 			memcpy(&(data_type.custom), &type_L8mesh_cst, sizeof(uint32_t));
 		
 			ret = mwifi_write(meshRootAddr, &data_type, &dataRequest_temp, 1, true);
-			MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mwifi_node_write", mdf_err_to_name(ret));			
+			USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mwifi_node_write", mdf_err_to_name(ret));			
 		}
 	}
 }
@@ -1272,7 +1276,7 @@ void devHeartbeat_dataTrans_bussinessTrig(void){
 		memcpy(&dataRequest_temp[L8_meshDataCmdLen], &nodeDev_hbDataTemp, sizeof(stt_hbDataUpload));
 
 		ret = mwifi_write(meshRootAddr, &data_type, dataRequest_temp, sizeof(stt_hbDataUpload) + 1, true);
-		MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> heartbeat mwifi_root_write", mdf_err_to_name(ret));
+		USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> heartbeat mwifi_root_write", mdf_err_to_name(ret));
 
 //		printf("n2r hb trig.\n");
 	}
@@ -1287,14 +1291,14 @@ void devHeartbeat_dataTrans_bussinessTrig(void){
 		dataRequest_temp[0] = L8DEV_MESH_SYSTEMTIME_BOARDCAST;
 
 		ret = mwifi_root_write(boardcastAddr, 1, &data_type, dataRequest_temp, sizeof(stt_timeZone) + sizeof(stt_localTime) + L8_meshDataCmdLen, true);
-        MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mwifi_root_write", mdf_err_to_name(ret));
+        USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> mwifi_root_write", mdf_err_to_name(ret));
 
 		if(true == usrMeshApplication_rootFirstConNoticeActionRserveGet()){
 			
 			memset(dataRequest_temp, 0, sizeof(dataRequest_temp));
 			dataRequest_temp[0] = L8DEV_MESH_CMD_ROOT_FIRST_CONNECT;
 			ret = mwifi_root_write(boardcastAddr, 1, &data_type, dataRequest_temp, 1, true);
-			MDF_ERROR_CHECK(ret != MDF_OK, ret, "<%s> root firstConnect mwifi_root_write", mdf_err_to_name(ret));
+			USR_ERROR_CHECK(ret != MDF_OK, ret, "<%s> root firstConnect mwifi_root_write", mdf_err_to_name(ret));
 		}
 
 //		printf("r2n systime boradcast trig.\n");
